@@ -5,10 +5,10 @@ Based on navigator 2.0.
 
 ## Features
 
-Deep links
-Nested Navigation
-Redirect
-RouteNotFound
+* Deep links
+* Nested Navigation
+* Redirect
+* RouteNotFound
 
 This is two-level navigation, but route uri path can contains as many as you want segments. This was designed to reduce complexity. The common case of using this package is a tab navigation for mobile devices and navigation rail for web. It prevents nested pages from unneccessary rebuilds, when you push new route or changing tab.
 
