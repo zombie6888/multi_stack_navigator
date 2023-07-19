@@ -40,10 +40,7 @@ final tabRoutes = [
   RoutePath('/page7', const RedirectWidget(path: '/tab3/nestedtest/page7')),
 ];
 ```
-Use RoutePath.branch constructor for nested route/tab pages.
-You can pass page widget or use RoutePath.builder as page builder.  
-Each first child route in branch will be used as a tab root route. 
-For this route configuration it will be '/', '/page1', '/page2' routes.
+Use RoutePath.branch constructor for nested route/tab pages. You can pass page widget or use RoutePath.builder as page builder. Each first child route in branch will be used as a tab root route. For this route configuration it will be '/', '/page1', '/page2' routes.
 
 ### Create config:
 ```dart
@@ -53,8 +50,7 @@ final config = TabRoutesConfig(
             tabRoutes: tabRoutes, view: view, controller: controller));
 ```
 
-You can create your own widget to customize tabbarview page or can try 
-PlatformTabsPage widget, which is showing tabs for small screen devices and navigation rail for wide sreen devices.  
+You can create your own widget to customize tabbarview page or can try PlatformTabsPage widget, which is showing tabs for small screen devices and navigation rail for wide sreen devices.  
 
 ### Pass config to App router
 ```dart
