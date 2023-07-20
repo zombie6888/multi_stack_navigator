@@ -128,7 +128,7 @@ RoutePath.builder('/page1', (context) {
 
 ## Observe navigation
 
-You can create your own Navigation observer by extending NavigationObserver or use LocationObserver class: 
+You can create your own navigation observer by extending NavigationObserver or use LocationObserver class: 
 
 ```dart
 final config = TabRoutesConfig(
@@ -137,7 +137,7 @@ final config = TabRoutesConfig(
           builder: ...);
 ```
 
-There is no unneccessary rebuild on current page when you push or pop other route or tap to switch to another tab. But if you want to rebuild something or run some callback on current page when navigation events occurs you can use built in LocationObserver stream.
+There is no unneccessary rebuilds on current page when you push or pop other route, or switching to another tab. But if you want to rebuild something or run some callback on current page, when navigation events occurs, you can use LocationObserver stream.
 
 ## Deep linking
 
