@@ -43,6 +43,7 @@ final tabRoutes = [
 Use RoutePath.branch constructor for nested route/tab pages. You can pass page widget or use RoutePath.builder as page builder. Each first child route in branch will be used as a tab root route. For this route configuration it will be '/', '/page1', '/page2' routes.
 
 ### Create config:
+
 ```dart
 final config = TabRoutesConfig(
         routes: tabRoutes,     
@@ -53,6 +54,7 @@ final config = TabRoutesConfig(
 You can create your own widget to customize tabbarview page or can try PlatformTabsPage widget, which is showing tabs for small screen devices and navigation rail for wide sreen devices.  
 
 ### Pass config to App router
+
 ```dart
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -70,3 +72,75 @@ class MyApp extends StatelessWidget {
 }
 
 ```
+
+## Navigate between pages
+
+User AppRouter inherited widget for navigation between pages:
+
+```dart
+AppRouter.of(context).pushNamed('/page1?param=test');
+```
+
+On the /page1 you can get query parameters by using: 
+
+```dart
+AppRouter.of(context).routePath.queryParams; //{"param": "test"}
+```
+
+You can also push related path like:
+
+```dart
+AppRouter.of(context).pushNamed('page1?param=test');
+```
+
+The difference is that you omit '/' prefix for path. If current page is a nested page of some tab, for example /tab1 tab, router will try to search /tab1/page1 in routes. In case of success, nested page will be pushed, otherwise it will try to search route in root stack or push "route not found" page.
+
+## Route not found functionality
+
+You can pass route, which will be used, if router can't find route path:
+
+```dart
+final routeNotFoundPath =
+      RouteNotFoundPath(path: '/not_found', child: const RouteNotFoundPage());
+final config = TabRoutesConfig(
+          ...
+          routeNotFoundPath: routeNotFoundPath,
+          builder: ...);
+```
+
+You can set uri and widget/builder for this page.
+
+
+## Guards and Redirects
+
+There is no any special guards, but you can create your own by using Routepath.builder and Redirect widget:
+
+```dart
+RoutePath.builder('/page1', (context) {
+    final isLogged = ... // your custom logic
+    if(isLogged) {
+      return Page1();
+    } else {
+      return const RedirectWidget(path: '/login'));
+    }
+});
+```
+
+## Observe navigation
+
+You can create your own Navigation observer by extending NavigationObserver or use LocationObserver class: 
+
+```dart
+final config = TabRoutesConfig(
+          ...
+          observer: LocationObserver(),
+          builder: ...);
+```
+
+There is no unneccessary rebuild on current page when you push or pop other route or tap to switch to another tab. But if you want to rebuild something or run some callback on current page when navigation events occurs you can use built in LocationObserver stream.
+
+## Deep linking
+
+Deep links is supported by this package. You can directly access to any path of your routes configuration. 
+
+
