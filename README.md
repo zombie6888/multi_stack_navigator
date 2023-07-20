@@ -1,7 +1,9 @@
 # Multi stack navigator
 
 A flutter navigator with deep links and nested navigation support. 
-Based on navigator 2.0. See [Example](https://zombie6888.github.io/multi_stack_navigator/)
+Based on navigator 2.0. 
+
+See [Web example](https://zombie6888.github.io/multi_stack_navigator/)
 
 ## Features
 
