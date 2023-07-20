@@ -19,7 +19,7 @@ final tabRoutes = [
     RoutePath.builder(
         '/page8', (context) => const RedirectWidget(path: '/tab1/page5'))
   ]),
-  RoutePath('/page1', const Page8()),
+  RoutePath('/page8', const Page8()),
   RoutePath.branch('/tab3', [
     RoutePath('/page2', const Page2()),
     RoutePath('/nestedtest/page7', const Page7()),

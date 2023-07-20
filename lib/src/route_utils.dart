@@ -20,6 +20,10 @@ class RouteParseUtils {
     _routeNotFoundPath = routeNotFoundPath ?? RouteNotFoundPath();
   }
 
+  String? get path => _uri.path;
+
+  Map<String, String> get queryParams => _uri.queryParameters;
+  
   String? get parentPath =>
       _uri.pathSegments.length > 1 ? '/${_uri.pathSegments[0]}' : null;
 
@@ -178,7 +182,7 @@ class RouteParseUtils {
 
   /// Search route in [routeList] configuration
   ///
-  RoutePath? searchRoute(List<RoutePath> routeList, String path,
+  static RoutePath? searchRoute(List<RoutePath> routeList, String path,
       [bool searchInRootRoutes = false]) {
     if (searchInRootRoutes) {
       return routeList.lastWhereOrNull((e) => e.path == path);
@@ -292,4 +296,5 @@ class RouteParseUtils {
     }
     return targetStack;
   }
+
 }

@@ -5,4 +5,5 @@ abstract interface class CustomRouteDelegate {
   CustomRouteDelegate(this.observer);
 
   pushNamed(String path, [bool isRedirect = false]);
+  replaceCurrentRoute(String path);
 }

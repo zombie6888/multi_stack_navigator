@@ -139,7 +139,7 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
   ///   AppRouter.of(context).redirect('page');
   ///
   @override
-  pushNamed(String path, [bool isRedirect = false]) {
+  Future<void> pushNamed(String path, [bool isRedirect = false]) async {
     _fromDeepLink = false;
     _pageWasRedirected = isRedirect;
     final fullPath = path.startsWith('/') ? path : _getAbsolutePath(path);
@@ -151,11 +151,47 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
     if (isRedirect) {
       final redirectStack =
           utils.getRedirectStack(currentStack: _stack, targetStack: newStack);
-      setNewRoutePath(redirectStack);
+      await setNewRoutePath(redirectStack);
       return;
     }
 
-    setNewRoutePath(newStack);
+    await setNewRoutePath(newStack);
+  }
+
+  @override
+  Future<void> replaceCurrentRoute(String targetLocation) async {
+    final utils = RouteParseUtils(targetLocation);
+    final path = utils.path ?? '';
+    final queryParams = utils.queryParams;
+    final routes = [..._stack.routes];
+
+    /// current page is nested
+    if (routes.last.children.isNotEmpty) {
+      final parentRoute = routes[_stack.currentIndex];
+      final branchRoutes = _routes.where((r) => r.children.isNotEmpty).toList();
+      final parentPath = utils.parentPath;
+      final targetPath =
+          parentPath != null ? path.replaceFirst(parentPath, '') : path;
+      final targetRoute = RouteParseUtils.searchRoute(
+          branchRoutes[_stack.currentIndex].children, targetPath, true);
+      if (targetRoute != null) {
+        final targetRoutes = [...parentRoute.children]..removeLast();
+        routes[_stack.currentIndex] = parentRoute.copyWith(children: [
+          ...targetRoutes,
+          targetRoute.copyWith(queryParams: queryParams)
+        ]);
+        await setNewRoutePath(
+            _stack.copyWith(routes: routes, currentLocation: targetRoute.path));
+      }
+    } else {
+      final targetRoute = RouteParseUtils.searchRoute(_routes, path, true);
+      if (targetRoute != null) {
+        await setNewRoutePath(_stack.copyWith(routes: [
+          ...routes..removeLast(),
+          targetRoute.copyWith(queryParams: queryParams)
+        ], currentLocation: targetRoute.path));
+      }
+    }
   }
 
   @override
@@ -326,7 +362,7 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
   String? _getParentLocation() {
     final location = _stack.currentLocation;
     final utils = RouteParseUtils(location);
-    final route = utils.searchRoute(_routes, location, true);
+    final route = RouteParseUtils.searchRoute(_routes, location, true);
     if ((route?.children ?? []).isNotEmpty) {
       return location;
     } else {
@@ -337,10 +373,10 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
   /// Convert route related path to absoulte path
   String? _getAbsolutePath(String path) {
     final parentPath = _getParentLocation();
-    final utils = RouteParseUtils(path);
+    //final utils = RouteParseUtils(path);
     if (parentPath != null) {
       final branchRoutes = _routes.where((r) => r.children.isNotEmpty).toList();
-      final targetRoute = utils.searchRoute(
+      final targetRoute = RouteParseUtils.searchRoute(
           branchRoutes[_stack.currentIndex].children, '/$path', true);
       if (targetRoute != null) {
         return '$parentPath/$path';

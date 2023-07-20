@@ -28,6 +28,10 @@ class AppRouter extends InheritedWidget {
     routerDelegate.pushNamed(path);
   }
 
+  void replaceWith(String path) {
+    routerDelegate.replaceCurrentRoute(path);
+  }
+
   void redirect(String path) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       routerDelegate.pushNamed(path, true);
@@ -40,16 +44,21 @@ class AppRouter extends InheritedWidget {
     navigator?.pop();
   }
 
-  static AppRouter? maybeOf(BuildContext context) {
-    return context.getInheritedWidgetOfExactType<AppRouter>();
+  static AppRouter? maybeOf(BuildContext context, [bool listen = false]) {
+    if (listen == true) {
+      return context.dependOnInheritedWidgetOfExactType<AppRouter>();
+    } else {
+      return context.getInheritedWidgetOfExactType<AppRouter>();
+    }
   }
 
-  static AppRouter of(BuildContext context) {
-    final AppRouter? result = maybeOf(context);
+  static AppRouter of(BuildContext context, [bool listen = false]) {
+    final AppRouter? result = maybeOf(context, listen);
     assert(result != null, 'No router found in context');
     return result!;
   }
 
   @override
-  bool updateShouldNotify(AppRouter oldWidget) => false;
+  bool updateShouldNotify(AppRouter oldWidget) =>
+      oldWidget.routePath != routePath;
 }
