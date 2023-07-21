@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final config = TabRoutesConfig(
+    final config = TabRoutesConfig.create(
         routes: tabRoutes,
         routeNotFoundPath: RouteNotFoundPath(
             path: '/not_found', child: const RouteNotFoundPage()),

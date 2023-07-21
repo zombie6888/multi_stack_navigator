@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'app_router.dart';
@@ -123,12 +124,13 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
   /// - See [RouterDelegate.setNewRoutePath]
   ///
   @override
-  Future<void> setNewRoutePath(NavigationStack configuration) async {
+  SynchronousFuture<void> setNewRoutePath(NavigationStack configuration) {
     _previousIndex = _fromDeepLink || _pageWasRedirected
         ? configuration.currentIndex
         : _stack.currentIndex;
     _stack = configuration;
     notifyListeners();
+    return SynchronousFuture<void>(null);
   }
 
   /// Push page to navigation stack [_stack]
@@ -139,7 +141,7 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
   ///   AppRouter.of(context).redirect('page');
   ///
   @override
-  Future<void> navigate(String path, [bool isRedirect = false]) async {
+  void navigate(String path, [bool isRedirect = false]) {
     _fromDeepLink = false;
     _pageWasRedirected = isRedirect;
     final fullPath = path.startsWith('/') ? path : _getAbsolutePath(path);
@@ -151,11 +153,17 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
     if (isRedirect) {
       final redirectStack =
           utils.getRedirectStack(currentStack: _stack, targetStack: newStack);
-      await setNewRoutePath(redirectStack);
+      setNewRoutePath(redirectStack);
       return;
     }
 
-    await setNewRoutePath(newStack);
+    setNewRoutePath(newStack);
+  }
+
+  @override
+  Future<bool> popRoute() {
+    print('haradware back');
+    return Future.value(true); //super.popRoute();
   }
 
   /// Replace current active route with route of [targetLocation].

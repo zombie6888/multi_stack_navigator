@@ -17,7 +17,7 @@ void main() {
 
   group('CustomRouteInformationParser', () {
     setUp(() {
-      config = TabRoutesConfig(
+      config = TabRoutesConfig.create(
           routes: tabRoutes,
           routeNotFoundPath: routeNotFoundPath,
           observer: LocationObserver(),

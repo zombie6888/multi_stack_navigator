@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import 'app_back_button_dispatcher.dart';
 import 'custom_route_information_parser.dart';
 import 'custom_route_information_provider.dart';
 import 'navigation_observer.dart';
@@ -18,16 +19,27 @@ import 'tab_routes_delegate.dart';
 /// The [observer] is using to observe route updates.
 ///
 class TabRoutesConfig extends RouterConfig<NavigationStack> {
-  TabRoutesConfig(
+  factory TabRoutesConfig.create(
       {required List<RoutePath> routes,
       RouteNotFoundPath? routeNotFoundPath,
       required TabPageBuilder builder,
-      NavigationObserver? observer})
-      : super(
+      NavigationObserver? observer}) {
+    final routeNotFound = routeNotFoundPath ?? RouteNotFoundPath();
+    final delegate =
+        TabRoutesDelegate(routes, builder, observer, routeNotFound);
+    return TabRoutesConfig(
+        routes: routes, delegate: delegate, routeNotFoundPath: routeNotFound);
+  }
+
+  TabRoutesConfig({
+    required List<RoutePath> routes,
+    required TabRoutesDelegate delegate,
+    required RouteNotFoundPath routeNotFoundPath,
+  }) : super(
+            backButtonDispatcher:
+                AppBackButtonDispatcher(routerDelegate: delegate),
             routeInformationParser: CustomRouteInformationParser(
-                NavigationStack(routes),
-                routeNotFoundPath ?? RouteNotFoundPath()),
-            routerDelegate: TabRoutesDelegate(routes, builder, observer,
-                routeNotFoundPath ?? RouteNotFoundPath()),
-            routeInformationProvider: CustomRouteInformationProvider());
+                NavigationStack(routes), routeNotFoundPath),
+            routerDelegate: delegate,
+            routeInformationProvider: CustomRouteInformationProvider());  
 }

@@ -47,7 +47,7 @@ Use RoutePath.branch constructor for nested route/tab pages. You can pass page w
 ### Create config:
 
 ```dart
-final config = TabRoutesConfig(
+final config = TabRoutesConfig.create(
         routes: tabRoutes,     
         builder: (context, tabRoutes, view, controller) => PlatformTabsPage(
             tabRoutes: tabRoutes, view: view, controller: controller));
@@ -119,7 +119,7 @@ You can pass route, which will be used, if router can't find route path:
 ```dart
 final routeNotFoundPath =
       RouteNotFoundPath(path: '/not_found', child: const RouteNotFoundPage());
-final config = TabRoutesConfig(
+final config = TabRoutesConfig.create(
           ...
           routeNotFoundPath: routeNotFoundPath,
           builder: ...);
@@ -148,7 +148,7 @@ RoutePath.builder('/page1', (context) {
 You can create your own navigation observer by extending NavigationObserver or use LocationObserver class: 
 
 ```dart
-final config = TabRoutesConfig(
+final config = TabRoutesConfig.create(
           ...
           observer: LocationObserver(),
           builder: ...);

@@ -23,7 +23,7 @@ void main() {
     }
 
     setUp(() {
-      config = TabRoutesConfig(
+      config = TabRoutesConfig.create(
           routes: tabRoutes,
           routeNotFoundPath: RouteNotFoundPath(
               path: '/not_found', child: const RouteNotFoundPage()),
@@ -129,7 +129,7 @@ void main() {
     }
 
     setUp(() {
-      config = TabRoutesConfig(
+      config = TabRoutesConfig.create(
           routes: tabRoutes,
           routeNotFoundPath: RouteNotFoundPath(
               path: '/not_found', child: const RouteNotFoundPage()),

@@ -6,4 +6,5 @@ abstract interface class CustomRouteDelegate {
 
   navigate(String path, [bool isRedirect = false]);
   replaceCurrentRoute(String path);
+  Future<bool> popRoute();
 }
