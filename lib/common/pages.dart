@@ -20,7 +20,7 @@ class Page6 extends StatelessWidget {
                 style: TextStyle(fontSize: 22),
               ),
               TextButton(
-                  onPressed: () {                  
+                  onPressed: () {
                     router.navigate('/tab2/page5');
                   },
                   child: const Text("/tab2/page5",
@@ -158,7 +158,7 @@ class Page1 extends StatelessWidget {
                       const Text("to page8", style: TextStyle(fontSize: 22))),
               TextButton(
                   key: const ValueKey('btn_tab1_page4'),
-                  onPressed: () {                    
+                  onPressed: () {
                     router.navigate('/tab1/page4?test=1');
                   },
                   child: const Text("to page4", style: TextStyle(fontSize: 22)))
@@ -199,21 +199,21 @@ class _HomePageState extends State<HomePage> {
                       const Text("home", style: TextStyle(fontSize: 22)),
                       TextButton(
                           key: const ValueKey('btn_tab2_page1'),
-                          onPressed: () {                           
+                          onPressed: () {
                             router.navigate('/tab2/page1');
                           },
                           child: const Text("to page1",
                               style: TextStyle(fontSize: 22))),
                       TextButton(
                           key: const ValueKey('btn_tab1_page4'),
-                          onPressed: () {                            
+                          onPressed: () {
                             router.navigate('/tab1/page4?test=1');
                           },
                           child: const Text("to page4",
                               style: TextStyle(fontSize: 22))),
                       TextButton(
                           key: const ValueKey('btn_page6'),
-                          onPressed: () {                           
+                          onPressed: () {
                             router.navigate('/page6?test=1');
                           },
                           child: const Text("to page6",
@@ -343,30 +343,76 @@ class Page4 extends StatelessWidget {
 class Page5 extends StatelessWidget {
   const Page5({super.key});
 
+  showDialog(BuildContext context) {
+    showGeneralDialog<String>(
+        context: context,
+        useRootNavigator: true,
+        pageBuilder: (BuildContext context, Animation<double> animation,
+            Animation<double> secondaryAnimation) {
+          return Container(
+            color: Colors.white,
+            child: SafeArea(
+                child: Stack(children: [
+              BackButtonListener(
+                  onBackButtonPressed: () {
+                    print('modal back pressed');
+                    return Future.value(true);
+                  },
+                  child: const Scaffold(body: const Text("modal"))),
+              Positioned(
+                  top: 5,
+                  right: 5,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(12.0),
+                      child: Icon(Icons.close, color: Colors.black),
+                    ),
+                  )),
+            ])),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     final router = AppRouter.of(context);
     print('build page 5');
-    return Scaffold(
-        appBar: AppBar(
-            leading: const BackButton(key: ValueKey('back_btn')),
-            title: const Text("page5")),
-        body: Center(
-          child: Column(
-            children: [
-              const Text(
-                "page5",
-                style: TextStyle(fontSize: 22),
-              ),
-              TextButton(
-                  onPressed: () {
-                    router.navigate('page9');
-                  },
-                  child: const Text("to related path page9",
-                      style: TextStyle(fontSize: 22))),
-            ],
-          ),
-        ));
+    return BackButtonListener(
+      onBackButtonPressed: () {
+        print('page 5 back dispatcher!');
+        return Future.value(true);
+      },
+      child: Scaffold(
+          appBar: AppBar(
+              leading: const BackButton(key: ValueKey('back_btn')),
+              title: const Text("page5")),
+          body: Center(
+            child: Column(
+              children: [
+                const Text(
+                  "page5",
+                  style: TextStyle(fontSize: 22),
+                ),
+                TextButton(
+                    onPressed: () {
+                      router.navigate('page9');
+                    },
+                    child: const Text("to related path page9",
+                        style: TextStyle(fontSize: 22))),
+                TextButton(
+                    key: const ValueKey('btn_show_modal'),
+                    onPressed: () {
+                      showDialog(context);
+                    },
+                    child: const Text("show modal",
+                        style: TextStyle(fontSize: 22))),
+              ],
+            ),
+          )),
+    );
   }
 }
 
