@@ -4,6 +4,6 @@ abstract interface class CustomRouteDelegate {
   final NavigationObserver? observer;
   CustomRouteDelegate(this.observer);
 
-  pushNamed(String path, [bool isRedirect = false]);
+  navigate(String path, [bool isRedirect = false]);
   replaceCurrentRoute(String path);
 }

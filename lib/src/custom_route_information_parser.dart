@@ -28,7 +28,7 @@ class CustomRouteInformationParser
   Future<NavigationStack> parseRouteInformation(
       RouteInformation routeInformation) async {
     return RouteParseUtils(routeInformation.location, _routeNotFoundPath)
-        .restoreRouteStack(_routes);
+        .restoreNavigationStack(_routes);
   }
 
   /// Inform platform about route configuration updates.

@@ -117,7 +117,7 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
 
   /// This will update navigation configration.
   ///
-  /// [_stack] could be updated either, by [pushNamed] function
+  /// [_stack] could be updated either, by [navigate] function
   /// or by platform. For example if you come from deep link.
   ///
   /// - See [RouterDelegate.setNewRoutePath]
@@ -134,18 +134,18 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
   /// Push page to navigation stack [_stack]
   ///
   /// It will be called when you run
-  ///   AppRouter.of(context).pushNamed('page');
+  ///   AppRouter.of(context).navigate('page');
   /// or
   ///   AppRouter.of(context).redirect('page');
   ///
   @override
-  Future<void> pushNamed(String path, [bool isRedirect = false]) async {
+  Future<void> navigate(String path, [bool isRedirect = false]) async {
     _fromDeepLink = false;
     _pageWasRedirected = isRedirect;
     final fullPath = path.startsWith('/') ? path : _getAbsolutePath(path);
     final utils = RouteParseUtils(fullPath, _routeNotFoundPath);
 
-    final newStack = utils.pushRouteToStack(_routes, _stack);
+    final newStack = utils.updateNavigationStack(_routes, _stack);
     observer?.didPushRoute(newStack.currentLocation);
 
     if (isRedirect) {
@@ -158,6 +158,8 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
     await setNewRoutePath(newStack);
   }
 
+  /// Replace current active route with route of [targetLocation].
+  ///
   @override
   Future<void> replaceCurrentRoute(String targetLocation) async {
     final utils = RouteParseUtils(targetLocation);

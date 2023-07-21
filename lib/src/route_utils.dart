@@ -23,18 +23,18 @@ class RouteParseUtils {
   String? get path => _uri.path;
 
   Map<String, String> get queryParams => _uri.queryParameters;
-  
+
   String? get parentPath =>
       _uri.pathSegments.length > 1 ? '/${_uri.pathSegments[0]}' : null;
 
-  /// Returns updated configaration [NavigationStack]
+  /// Creates configuration [NavigationStack]
   ///
-  /// Takes [routes], passed by [RouteInformationParser]
-  /// and return updated navigation stack.
+  /// Takes [routes], passed by [RouteInformationParser],
+  /// and return updated navigation stack according to the target [_uri.path].
   ///
   /// Called by platform, Deep links will be parsed here.
   ///
-  NavigationStack restoreRouteStack(List<RoutePath> routes) {
+  NavigationStack restoreNavigationStack(List<RoutePath> routes) {
     assert(routes.isNotEmpty, 'route config should be not empty');
 
     final branchRoutes = routes.where((c) => c.children.isNotEmpty).toList();
@@ -101,8 +101,8 @@ class RouteParseUtils {
       } else {
         // single page route(not a tab)
         return NavigationStack([...branchStack, rootRoute],
-              currentIndex: currentIndex, currentLocation: _uri.path);
-      }     
+            currentIndex: currentIndex, currentLocation: _uri.path);
+      }
     }
 
     // route not found
@@ -113,11 +113,11 @@ class RouteParseUtils {
   /// Returns updated configaration [NavigationStack]
   ///
   /// Takes [routeList] and current [stack] from [RouterDelegate]
-  /// and return updated navigation stack.
+  /// and return updated navigation stack according to the target [_uri.path].
   ///
-  /// Called by [CustomRouteDelegate.pushNamed].
+  /// Called by [CustomRouteDelegate.navigate].
   ///
-  NavigationStack pushRouteToStack(
+  NavigationStack updateNavigationStack(
       List<RoutePath> routeList, NavigationStack stack) {
     final rootRoute = routeList.firstWhereOrNull((e) => e.path == _uri.path);
     final routes = stack.routes;
@@ -296,5 +296,4 @@ class RouteParseUtils {
     }
     return targetStack;
   }
-
 }

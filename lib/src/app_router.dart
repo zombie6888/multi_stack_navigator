@@ -24,8 +24,8 @@ class AppRouter extends InheritedWidget {
     return null;
   }
 
-  void pushNamed(String path) {
-    routerDelegate.pushNamed(path);
+  void navigate(String path) {
+    routerDelegate.navigate(path);
   }
 
   void replaceWith(String path) {
@@ -34,7 +34,7 @@ class AppRouter extends InheritedWidget {
 
   void redirect(String path) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      routerDelegate.pushNamed(path, true);
+      routerDelegate.navigate(path, true);
     });
   }
 

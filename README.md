@@ -80,7 +80,7 @@ class MyApp extends StatelessWidget {
 User AppRouter inherited widget for navigation between pages:
 
 ```dart
-AppRouter.of(context).pushNamed('/page1?param=test');
+AppRouter.of(context).navigate('/page1?param=test');
 ```
 
 On the /page1 you can get query parameters by using: 
@@ -92,7 +92,7 @@ AppRouter.of(context).routePath.queryParams; //{"param": "test"}
 You can also push related path like:
 
 ```dart
-AppRouter.of(context).pushNamed('page1?param=test');
+AppRouter.of(context).navigate('page1?param=test');
 ```
 
 The difference is that you omit '/' prefix for path. If current page is a nested page of some tab, for example /tab1 tab, router will try to search /tab1/page1 in routes. In case of success, nested page will be pushed, otherwise it will try to search route in root stack or push "route not found" page.
