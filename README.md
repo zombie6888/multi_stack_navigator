@@ -97,6 +97,21 @@ AppRouter.of(context).navigate('page1?param=test');
 
 The difference is that you omit '/' prefix for path. If current page is a nested page of some tab, for example /tab1 tab, router will try to search /tab1/page1 in routes. In case of success, nested page will be pushed, otherwise it will try to search route in root stack or push "route not found" page.
 
+if you want to replace current route use:
+
+```dart
+AppRouter.of(context).replaceWith('/page6?test=2');
+```
+
+If previous route had the same route path, but query parameters are different, the page won't rebuilded.
+if you want to get updated parameters at the build function of the page6 you can call router with listen parameter setted up to true:
+
+```dart
+AppRouter.of(context, true).routePath.queryParams;
+```
+
+Approuter is inherited widget, which is not add widget to dependants by default. It allows to use it's methods without subscribe to changes. If you get it with "listen: true" parameter, dependonInheritedWidget function will be called, and widget will subscribe to route changes (in this case query parameters updating).   
+
 ## Route not found functionality
 
 You can pass route, which will be used, if router can't find route path:
