@@ -239,6 +239,57 @@ void main() {
             RoutePath('/page6', null));
         expect(delegate.currentConfiguration?.currentLocation, '/page6');
       });
+      test('Replace nested route', () async {
+        final stack = await parser
+            .parseRouteInformation(const RouteInformation(location: '/'));
+        await delegate.setNewRoutePath(stack);
+        expect(delegate.currentConfiguration?.currentIndex, 0);
+        await delegate.pushNamed('/tab1/page4');
+        expect(delegate.currentConfiguration?.routes[0].children.length, 2);
+        expect(delegate.currentConfiguration?.routes[0].children.last,
+            RoutePath('/page4', null));
+        await delegate.pushNamed('/tab1/nestedtest/page7');
+        expect(delegate.currentConfiguration?.currentLocation,
+            '/tab1/nestedtest/page7');
+        expect(delegate.currentConfiguration?.routes[0].children.last,
+            RoutePath('/nestedtest/page7', null));
+        expect(delegate.currentConfiguration?.routes[0].children.length, 3);
+        await delegate.replaceCurrentRoute('/tab1/page5');
+        expect(delegate.currentConfiguration?.routes[0].children.last,
+            RoutePath('/page5', null));
+        expect(delegate.currentConfiguration?.currentLocation, '/tab1/page5');
+        expect(delegate.currentConfiguration?.routes[0].children.length, 3);
+      });
+      test('Replace single route', () async {
+        final stack = await parser
+            .parseRouteInformation(const RouteInformation(location: '/'));
+        await delegate.setNewRoutePath(stack);
+        expect(delegate.currentConfiguration?.currentIndex, 0);
+        await delegate.pushNamed('/page6');
+        expect(delegate.currentConfiguration?.routes.length, 4);
+        expect(delegate.currentConfiguration?.routes.last,
+            RoutePath('/page6', null));
+        await delegate.replaceCurrentRoute('/page8');
+        expect(delegate.currentConfiguration?.currentLocation, '/page8');
+        expect(delegate.currentConfiguration?.routes.last,
+            RoutePath('/page8', null));
+        expect(delegate.currentConfiguration?.routes.length, 4);
+      });
+      test('Replace single route with different params', () async {
+        final stack = await parser
+            .parseRouteInformation(const RouteInformation(location: '/'));
+        await delegate.setNewRoutePath(stack);
+        expect(delegate.currentConfiguration?.currentIndex, 0);
+        await delegate.pushNamed('/page6?test=1');
+        expect(delegate.currentConfiguration?.routes.length, 4);
+        expect(delegate.currentConfiguration?.routes.last,
+            RoutePath('/page6', null, queryParams: {'test': '1'}));
+        await delegate.replaceCurrentRoute('/page6?test=2');
+        expect(delegate.currentConfiguration?.currentLocation, '/page6');
+        expect(delegate.currentConfiguration?.routes.last,
+            RoutePath('/page6', null, queryParams: {'test': '2'}));
+        expect(delegate.currentConfiguration?.routes.length, 4);
+      });
       test('Push route not found route', () async {
         await delegate.pushNamed('/fakeroute');
         expect(delegate.currentConfiguration?.routes.last, routeNotFoundPath);

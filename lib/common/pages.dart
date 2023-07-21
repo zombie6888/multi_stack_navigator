@@ -46,11 +46,11 @@ class Page6 extends StatelessWidget {
                   child: const Text("replace with /page6?test=2",
                       style: TextStyle(fontSize: 22))),
               TextButton(
-                  key: const ValueKey('btn_replace_page1'),
+                  key: const ValueKey('btn_replace_page8'),
                   onPressed: () {
-                    router.replaceWith('/page1');
+                    router.replaceWith('/page8');
                   },
-                  child: const Text("replace with page1",
+                  child: const Text("replace with page8",
                       style: TextStyle(fontSize: 22))),
               TextButton(
                   onPressed: () {
@@ -71,7 +71,9 @@ class Page8 extends StatelessWidget {
     print('build page8');
     final router = AppRouter.of(context);
     return Scaffold(
-        appBar: AppBar(title: const Text("page8")),
+        appBar: AppBar(
+          leading: const BackButton(key: ValueKey('back_btn')),
+          title: const Text("page8")),
         body: Center(
           child: Column(
             children: [
@@ -207,6 +209,7 @@ class _HomePageState extends State<HomePage> {
                           child: const Text("to page1",
                               style: TextStyle(fontSize: 22))),
                       TextButton(
+                          key: const ValueKey('btn_tab1_page4'),
                           onPressed: () {
                             //Navigator.of(context).pushNamed('/page1');
                             router.pushNamed('/tab1/page4?test=1');
@@ -319,6 +322,7 @@ class Page4 extends StatelessWidget {
                   child:
                       const Text("to page5", style: TextStyle(fontSize: 22))),
               TextButton(
+                  key: const ValueKey('btn_tab1_nestedtest_page7'),
                   onPressed: () {
                     router.pushNamed('/tab1/nestedtest/page7');
                   },

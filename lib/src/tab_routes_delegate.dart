@@ -180,8 +180,12 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
           ...targetRoutes,
           targetRoute.copyWith(queryParams: queryParams)
         ]);
+        final parentLocation = _getParentLocation();
+        final location = parentLocation != null
+            ? '$parentLocation${targetRoute.path}'
+            : targetRoute.path;
         await setNewRoutePath(
-            _stack.copyWith(routes: routes, currentLocation: targetRoute.path));
+            _stack.copyWith(routes: routes, currentLocation: location));
       }
     } else {
       final targetRoute = RouteParseUtils.searchRoute(_routes, path, true);
