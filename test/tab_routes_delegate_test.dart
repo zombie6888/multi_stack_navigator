@@ -304,6 +304,17 @@ void main() {
         expect(delegate.currentConfiguration?.routes.last,
             RoutePath('/page6', null));
       });
+      test('Deep link to tab root route', () async {
+        final stack = await parser
+            .parseRouteInformation(const RouteInformation(location: '/tab1'));
+        await delegate.setNewRoutePath(stack);
+        expect(delegate.currentConfiguration?.routes[0].children.last,
+            RoutePath('/', null));
+        expect(delegate.currentConfiguration?.routes.length,
+            3);
+         expect(delegate.currentConfiguration?.routes.last,
+            isNot(routeNotFoundPath));    
+      });
       test('Deep link with query params', () async {
         final stack = await parser.parseRouteInformation(
             const RouteInformation(location: '/page6?test=1'));

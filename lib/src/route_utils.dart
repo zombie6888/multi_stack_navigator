@@ -88,10 +88,12 @@ class RouteParseUtils {
       branchStack[currentIndex] = currentBranch.copyWith(children: children);
 
       if (rootRoute == null) {
-        if (_uri.path == '/') {
+        if (_uri.path == '/' || _uri.path == branchStack[currentIndex].path) {
           // default route
+          final location =
+              _uri.path == '/' ? '/' : branchStack[currentIndex].path;
           return NavigationStack(branchStack,
-              currentIndex: currentIndex, currentLocation: "/");
+              currentIndex: currentIndex, currentLocation: location);
         } else {
           // route not found
           return NavigationStack([...branchStack, _routeNotFoundPath],
