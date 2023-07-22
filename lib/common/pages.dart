@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:multi_stack_navigator/multi_stack_navigator.dart';
 
+import 'hardware_back_handler.dart';
+
 class Page6 extends StatelessWidget {
   const Page6({super.key});
 
@@ -380,7 +382,7 @@ class Page5 extends StatelessWidget {
   Widget build(BuildContext context) {
     final router = AppRouter.of(context);
     print('build page 5');
-    return BackButtonListener(
+    return HardwareBackHandler(
       onBackButtonPressed: () {
         print('page 5 back dispatcher!');
         return Future.value(true);

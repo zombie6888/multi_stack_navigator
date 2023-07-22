@@ -160,10 +160,56 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
     setNewRoutePath(newStack);
   }
 
+  /// Hardware back button default handler
+  /// 
+  /// It will pop single or tab nested page. If current active route
+  /// is a tab nested page, nested navigator pop method will be called, 
+  /// for a single page it calls [_rootNavigatorKey.currentState.pop].
+  /// 
+  /// If current route is a tab root page route it will switch to previous tab,
+  /// until initial tab will be reached. From root page of initial tab it will
+  /// close the entire application.
+  /// 
+  /// If return value is false, it will pass control to system and app will be 
+  /// closed in most of cases. 
+  /// - see [RouterDelegate.popRoute]
+  /// 
+  /// This behaviour can be overrided by [BackButtonListener]
+  /// or [HardwareBackHandler]. 
+  /// 
+  /// When [BackButtonListener] state disposed, this callback will continue 
+  /// to handle back behavior. The state of any nested page will only be 
+  /// disposed, when navigator pop event occurs. It will cause listener 
+  /// to continue handle back behavior, even if page is not active (active tab 
+  /// index was changed or another nested page was pushed). In order to prevent 
+  /// this case, consider to use [HardwareBackHandler], which is listening for
+  /// navigation events and will pass controll back to this handler, 
+  /// if any of navigation event occurs.
+  ///
   @override
-  Future<bool> popRoute() {
-    print('haradware back');
-    return Future.value(true); //super.popRoute();
+  Future<bool> popRoute() {   
+    final branchRoutes =
+        _stack.routes.where((r) => r.children.isNotEmpty).toList();
+    
+    if (branchRoutes.length == _stack.routes.length) {
+      final nestedNavigator = branchRoutes[_stack.currentIndex].navigatorKey;
+      if (nestedNavigator?.currentState?.canPop() ?? false) {
+        // nested route pop
+        nestedNavigator?.currentState?.pop();
+      } else if (_stack.currentIndex > 0) {
+        // switch tab
+        _tabIndexUpdateHandler(_stack.currentIndex - 1);
+      } else {      
+        // close app
+        return Future.value(false);
+      }   
+    } else {
+      if (_rootNavigatorKey.currentState?.canPop() ?? false) {
+        // root route pop 
+        _rootNavigatorKey.currentState?.pop();
+      }
+    }
+    return Future.value(true);
   }
 
   /// Replace current active route with route of [targetLocation].
