@@ -355,7 +355,7 @@ class Page5 extends StatelessWidget {
             color: Colors.white,
             child: SafeArea(
                 child: Stack(children: [
-              BackButtonListener(
+              HardwareBackHandler(
                   onBackButtonPressed: () {
                     print('modal back pressed');
                     return Future.value(true);

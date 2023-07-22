@@ -22,11 +22,13 @@ class _BackButtonHandlerState extends State<HardwareBackHandler> {
   StreamSubscription<LocationUpdateData>? _loacationSubscription;
 
   @override
-  void initState() {   
-    _loacationSubscription =
-        AppRouter.of(context).locationUpdates?.listen((event) {
-      dispatcher?.removeCallback(widget.onBackButtonPressed);
-    });
+  void initState() {
+    if (AppRouter.maybeOf(context) != null) {
+      _loacationSubscription =
+          AppRouter.of(context).locationUpdates?.listen((event) {
+        dispatcher?.removeCallback(widget.onBackButtonPressed);
+      });
+    } 
     super.initState();
   }
 
