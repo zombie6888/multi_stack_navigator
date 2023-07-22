@@ -201,5 +201,5 @@ and you can override default page builder from configaration by page builder for
 
 ```dart
 RoutePath('/page6', const Page6(),
-      pageBuilder: (child) => MaterialPage)),
+      pageBuilder: (child) => MaterialPage(child)),
  ```           
