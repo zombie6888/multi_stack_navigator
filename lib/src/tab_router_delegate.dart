@@ -31,10 +31,10 @@ typedef PageBuilder = Page<dynamic> Function(Widget child)?;
 /// It supports only two-level navigation,
 /// - see [RoutePath]
 ///
-class TabRoutesDelegate extends RouterDelegate<NavigationStack>
+class TabRouterDelegate extends RouterDelegate<NavigationStack>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin
     implements CustomRouteDelegate {
-  TabRoutesDelegate(
+  TabRouterDelegate(
       {required List<RoutePath> routes,
       required this.tabPageBuider,
       this.observer,

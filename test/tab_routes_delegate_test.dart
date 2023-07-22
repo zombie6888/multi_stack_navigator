@@ -1,30 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:multi_stack_navigator/common/pages.dart';
-import 'package:multi_stack_navigator/common/platform_tabs_page.dart';
+import 'package:multi_stack_navigator/common/platform_multi_stack_wrapper.dart';
 import 'package:multi_stack_navigator/common/routes.dart';
 import 'package:multi_stack_navigator/multi_stack_navigator.dart';
 import 'package:multi_stack_navigator/src/custom_route_information_parser.dart';
-import 'package:multi_stack_navigator/src/tab_routes_delegate.dart';
+import 'package:multi_stack_navigator/src/tab_router_delegate.dart';
 
 void main() {
-  late TabRoutesConfig config;
+  late TabRouterConfig config;
   TestWidgetsFlutterBinding.ensureInitialized();
-  late TabRoutesDelegate delegate;
+  late TabRouterDelegate delegate;
   late CustomRouteInformationParser parser;
   final routeNotFoundPath =
       RouteNotFoundPath(path: '/not_found', child: const RouteNotFoundPage());
 
   group('TabRoutesDelegate', () {
     setUp(() {
-      config = TabRoutesConfig.create(
+      config = TabRouterConfig.create(
           routes: tabRoutes,
           routeNotFoundPath: routeNotFoundPath,
           observer: LocationObserver(),
-          tabPageBuider: (context, tabRoutes, view, controller) => PlatformTabsPage(
-              tabRoutes: tabRoutes, view: view, controller: controller));
+          tabPageBuider: (context, tabRoutes, view, controller) =>
+              PlatformMultiStackWrapper(
+                  tabRoutes: tabRoutes, view: view, controller: controller));
 
-      delegate = config.routerDelegate as TabRoutesDelegate;
+      delegate = config.routerDelegate as TabRouterDelegate;
       parser = config.routeInformationParser as CustomRouteInformationParser;
     });
     group('Push route', () {
@@ -310,10 +311,9 @@ void main() {
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.routes[0].children.last,
             RoutePath('/', null));
-        expect(delegate.currentConfiguration?.routes.length,
-            3);
-         expect(delegate.currentConfiguration?.routes.last,
-            isNot(routeNotFoundPath));    
+        expect(delegate.currentConfiguration?.routes.length, 3);
+        expect(delegate.currentConfiguration?.routes.last,
+            isNot(routeNotFoundPath));
       });
       test('Deep link with query params', () async {
         final stack = await parser.parseRouteInformation(

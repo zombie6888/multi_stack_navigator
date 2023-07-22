@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:multi_stack_navigator/multi_stack_navigator.dart';
 
-class PlatformTabsPage extends StatelessWidget {
+class PlatformMultiStackWrapper extends StatelessWidget {
   final Iterable<RoutePath> tabRoutes;
   final TabBarView view;
   final TabController controller;
-  const PlatformTabsPage(
+  const PlatformMultiStackWrapper(
       {super.key,
       required this.tabRoutes,
       required this.view,
@@ -30,7 +30,9 @@ class PlatformTabsPage extends StatelessWidget {
                         NavigationRailDestination(
                           indicatorColor: Colors.black,
                           icon: const Icon(Icons.home),
-                          label: Text(route.path.replaceAll('/', ''),),
+                          label: Text(
+                            route.path.replaceAll('/', ''),
+                          ),
                         ),
                     ],
                     onDestinationSelected: (index) {

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:multi_stack_navigator/common/pages.dart';
-import 'package:multi_stack_navigator/common/platform_tabs_page.dart';
+import 'package:multi_stack_navigator/common/platform_multi_stack_wrapper.dart';
 import 'package:multi_stack_navigator/common/routes.dart';
 import 'package:multi_stack_navigator/multi_stack_navigator.dart';
 
 import 'package:multi_stack_navigator/src/custom_route_information_parser.dart';
-import 'package:multi_stack_navigator/src/tab_routes_delegate.dart';
+import 'package:multi_stack_navigator/src/tab_router_delegate.dart';
 
 void main() {
-  late TabRoutesConfig config;
+  late TabRouterConfig config;
   TestWidgetsFlutterBinding.ensureInitialized();
   late CustomRouteInformationParser parser;
-  late TabRoutesDelegate delegate;
+  late TabRouterDelegate delegate;
 
   group('Navigate forward tests', () {
     loadApp(WidgetTester tester) async {
@@ -23,13 +23,14 @@ void main() {
     }
 
     setUp(() {
-      config = TabRoutesConfig.create(
+      config = TabRouterConfig.create(
           routes: tabRoutes,
           routeNotFoundPath: RouteNotFoundPath(
               path: '/not_found', child: const RouteNotFoundPage()),
           observer: LocationObserver(),
-          tabPageBuider: (context, tabRoutes, view, controller) => PlatformTabsPage(
-              tabRoutes: tabRoutes, view: view, controller: controller));
+          tabPageBuider: (context, tabRoutes, view, controller) =>
+              PlatformMultiStackWrapper(
+                  tabRoutes: tabRoutes, view: view, controller: controller));
     });
     testWidgets('HomeScreen loaded', (WidgetTester tester) async {
       await loadApp(tester);
@@ -135,15 +136,16 @@ void main() {
     }
 
     setUp(() {
-      config = TabRoutesConfig.create(
+      config = TabRouterConfig.create(
           routes: tabRoutes,
           routeNotFoundPath: RouteNotFoundPath(
               path: '/not_found', child: const RouteNotFoundPage()),
           observer: LocationObserver(),
-          tabPageBuider: (context, tabRoutes, view, controller) => PlatformTabsPage(
-              tabRoutes: tabRoutes, view: view, controller: controller));
+          tabPageBuider: (context, tabRoutes, view, controller) =>
+              PlatformMultiStackWrapper(
+                  tabRoutes: tabRoutes, view: view, controller: controller));
       parser = config.routeInformationParser as CustomRouteInformationParser;
-      delegate = config.routerDelegate as TabRoutesDelegate;
+      delegate = config.routerDelegate as TabRouterDelegate;
     });
     testWidgets('Pop test', (WidgetTester tester) async {
       await loadApp(tester);

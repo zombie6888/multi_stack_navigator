@@ -5,7 +5,7 @@ import 'custom_route_information_provider.dart';
 import 'navigation_observer.dart';
 import 'navigation_stack.dart';
 import 'route_path.dart';
-import 'tab_routes_delegate.dart';
+import 'tab_router_delegate.dart';
 
 /// Two-level navigation config for tabs.
 ///
@@ -24,8 +24,8 @@ import 'tab_routes_delegate.dart';
 /// The [builder] is using for building tab page.
 /// The [observer] is using to observe route updates.
 ///
-class TabRoutesConfig extends RouterConfig<NavigationStack> {
-  factory TabRoutesConfig.create(
+class TabRouterConfig extends RouterConfig<NavigationStack> {
+  factory TabRouterConfig.create(
       {required List<RoutePath> routes,
       RouteNotFoundPath? routeNotFoundPath,
       BackButtonDispatcher? backButtonDispatcher,
@@ -33,13 +33,13 @@ class TabRoutesConfig extends RouterConfig<NavigationStack> {
       required TabPageBuilder tabPageBuider,
       NavigationObserver? observer}) {
     final routeNotFound = routeNotFoundPath ?? RouteNotFoundPath();
-    final delegate = TabRoutesDelegate(
+    final delegate = TabRouterDelegate(
         routes: routes,
         defaultpageBuilder: defaultPageBuilder,
         tabPageBuider: tabPageBuider,
         observer: observer,
         routeNotFoundPath: routeNotFound);
-    return TabRoutesConfig(
+    return TabRouterConfig(
         backButtonDispatcher:
             backButtonDispatcher ?? RootBackButtonDispatcher(),
         routes: routes,
@@ -47,9 +47,9 @@ class TabRoutesConfig extends RouterConfig<NavigationStack> {
         routeNotFoundPath: routeNotFound);
   }
 
-  TabRoutesConfig({
+  TabRouterConfig({
     required List<RoutePath> routes,
-    required TabRoutesDelegate delegate,
+    required TabRouterDelegate delegate,
     required BackButtonDispatcher backButtonDispatcher,
     required RouteNotFoundPath routeNotFoundPath,
   }) : super(

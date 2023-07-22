@@ -18,6 +18,8 @@ This is two-level navigation, but route uri path can contains as many as you wan
 
 ### Create routes: 
 
+Define route configuration:
+
 ```dart
 final tabRoutes = [
   RoutePath.branch('/tab1', [
@@ -42,18 +44,18 @@ final tabRoutes = [
   RoutePath('/page7', const RedirectWidget(path: '/tab3/nestedtest/page7')),
 ];
 ```
-Use RoutePath.branch constructor for nested route/tab pages. You can pass page widget or use RoutePath.builder as page builder. Each first child route in branch will be used as a tab root route. For this route configuration it will be '/', '/page1', '/page2' routes.
+ In order to create single (not a tab) pages, use RoutePath constructor. In order to create tab route with nested pages, use RoutePath.branch constructor. You can set the second parameter, or use RoutePath.builder to provide widget which will be displayed on the page. Each first child page of a branch route from configuration, becomes a tab root route in navigation stack. In this case, it will be pages with paths: '/', '/page1', '/page2'.
 
 ### Create config:
 
 ```dart
-final config = TabRoutesConfig.create(
+final config = TabRouterConfig.create(
         routes: tabRoutes,     
-        tabPageBuider: (context, tabRoutes, view, controller) => PlatformTabsPage(
+        tabPageBuider: (context, tabRoutes, view, controller) => PlatformMultiStackWrapper(
             tabRoutes: tabRoutes, view: view, controller: controller));
 ```
 
-You can create your own widget to customize tabbarview page or can try PlatformTabsPage widget, which is showing tabs for small screen devices and navigation rail for wide sreen devices.  
+You can create your own widget to customize tabbarview page. To give an example, consider PlatformMultiStackWrapper widget, which is showing tabs for small screen devices and navigation rail for wide screen devices.  
 
 ### Pass config to App router
 
@@ -77,7 +79,7 @@ class MyApp extends StatelessWidget {
 
 ## Navigate between pages
 
-User AppRouter inherited widget for navigation between pages:
+Use AppRouter inherited widget for navigation between pages:
 
 ```dart
 AppRouter.of(context).navigate('/page1?param=test');
@@ -95,7 +97,7 @@ You can also push related path like:
 AppRouter.of(context).navigate('page1?param=test');
 ```
 
-The difference is that you omit '/' prefix for path. If current page is a nested page of some tab, for example /tab1 tab, router will try to search /tab1/page1 in routes. In case of success, nested page will be pushed, otherwise it will try to search route in root stack or push "route not found" page.
+The difference is that you omit '/' prefix for path. If current page is a nested page of some tab, for example /tab1 tab, router will try to search /tab1/page1 in routes. In case of success, nested page will be pushed, otherwise it will try to search route in the root stack or push "route not found" page.
 
 if you want to replace current route use:
 
@@ -104,13 +106,13 @@ AppRouter.of(context).replaceWith('/page6?test=2');
 ```
 
 If previous route had the same route path, but query parameters are different, the page won't rebuilded.
-if you want to get updated parameters at the build function of the page6 you can call router with listen parameter setted up to true:
+if you want to get updated parameters at the build function of the page6, you can call router with listen parameter setted up to true:
 
 ```dart
 AppRouter.of(context, true).routePath.queryParams;
 ```
 
-Approuter is inherited widget, which is not add widget to dependants by default. It allows to use it's methods without subscribe to changes. If you get it with "listen: true" parameter, dependonInheritedWidget function will be called, and widget will subscribe to route changes (in this case query parameters updating).   
+AppRouter is inherited widget, which is not add widget to dependants by default. It allows to use it's methods without subscribe to changes. If you get AppRouter with "listen: true" parameter, dependonInheritedWidget function will be called, and widget will subscribe to route changes (in this case, query parameters updating).   
 
 ## Route not found functionality
 
@@ -119,7 +121,7 @@ You can pass route, which is used, when router can't find route path:
 ```dart
 final routeNotFoundPath =
       RouteNotFoundPath(path: '/not_found', child: const RouteNotFoundPage());
-final config = TabRoutesConfig.create(
+final config = TabRouterConfig.create(
           ...
           routeNotFoundPath: routeNotFoundPath,
           tabPageBuider: ...);
@@ -130,7 +132,7 @@ You can set uri and widget/builder for this page.
 
 ## Guards and Redirects
 
-There is no any special guards, but you can create your own by using Routepath.builder and Redirect widget:
+The package doesn't have any special guards, but you can create your own by using Routepath.builder and Redirect widget:
 
 ```dart
 RoutePath.builder('/page1', (context) {
@@ -148,20 +150,20 @@ RoutePath.builder('/page1', (context) {
 You can create your own navigation observer by extending NavigationObserver or use LocationObserver class: 
 
 ```dart
-final config = TabRoutesConfig.create(
+final config = TabRouterConfig.create(
           ...
           observer: LocationObserver(),
           tabPageBuider: ...);
 ```
 
-There is no unneccessary rebuilds on current page when you push or pop other route, or switching to another tab. But if you want to rebuild something or run some callback on current page, when navigation events occurs, you can use LocationObserver stream.
+The current page will not perform unneccessary rebuilds, when you push or pop other route, or switching to another tab. But if you want to rebuild something or run some callback on current page, when navigation events occurs, you can use LocationObserver stream.
 
 ## Hardware back button behavior
 
-When you tap android back button, default handler will be called. It will try to pop nested page 
-or root page, otherwise, if tab root page is active, it will try to switch to previuos tab. When you tap on the root page of the first tab it will pop entire application.
+When you tap android back button, default back handler will be called. Router will try to pop nested page 
+or root page, otherwise, if tab root page is opened, it will try to switch to previuos tab. When you tap on the root page of the first tab, it will pop entire application.
 
-You can override this behavior by using HardwareBackHandler widget from any widget of any page: 
+You can override this behavior by using HardwareBackHandler widget from any widget and any page: 
 
 ```dart
 HardwareBackHandler(
@@ -180,7 +182,7 @@ class MyCustomBackButtonDispatcher extends RootBackButtonDispatcher {
   ...
 }
 ...
-final config = TabRoutesConfig.create(
+final config = TabRouterConfig.create(
           ...
           backButtonDispatcher: MyCustomBackButtonDispatcher,
           tabPageBuider: ...);
@@ -191,13 +193,13 @@ final config = TabRoutesConfig.create(
 You can define default page transitions by providing custom page builder to configuration: 
 
 ```dart
-final config = TabRoutesConfig.create(
+final config = TabRouterConfig.create(
           ...
           defaultPageBuilder: (child) => MyCustomPageBuilder(child),
           tabPageBuider: ...);
 ```
 
-and you can override default page builder from configaration by page builder for specific routepath: 
+and you can override default page builder from configaration for specific routepath: 
 
 ```dart
 RoutePath('/page6', const Page6(),

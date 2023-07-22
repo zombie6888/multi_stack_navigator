@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:multi_stack_navigator/common/pages.dart';
-import 'package:multi_stack_navigator/common/platform_tabs_page.dart';
+import 'package:multi_stack_navigator/common/platform_multi_stack_wrapper.dart';
 import 'package:multi_stack_navigator/common/routes.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:multi_stack_navigator/multi_stack_navigator.dart';
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final config = TabRoutesConfig.create(
+    final config = TabRouterConfig.create(
         defaultPageBuilder: (child) =>
             PlatformPageFactory.getPage(child: child),
         routes: tabRoutes,
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
             path: '/not_found', child: const RouteNotFoundPage()),
         observer: LocationObserver(),
         tabPageBuider: (context, tabRoutes, view, controller) =>
-            PlatformTabsPage(
+            PlatformMultiStackWrapper(
                 tabRoutes: tabRoutes, view: view, controller: controller));
 
     return MaterialApp.router(

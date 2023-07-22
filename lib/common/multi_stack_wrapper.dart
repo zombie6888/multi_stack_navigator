@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:multi_stack_navigator/multi_stack_navigator.dart';
 
-class TabsPage extends StatelessWidget {
+class MultiStackWrapper extends StatelessWidget {
   final Iterable<RoutePath> tabRoutes;
   final TabBarView view;
   final TabController controller;
-  const TabsPage(
+  const MultiStackWrapper(
       {super.key,
       required this.tabRoutes,
       required this.view,
@@ -20,7 +20,7 @@ class TabsPage extends StatelessWidget {
             type: BottomNavigationBarType.fixed,
             items: <BottomNavigationBarItem>[
               for (var route in tabRoutes)
-                BottomNavigationBarItem(                
+                BottomNavigationBarItem(
                   icon: const Icon(Icons.home),
                   label: route.path,
                 )

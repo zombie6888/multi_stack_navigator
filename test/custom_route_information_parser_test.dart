@@ -1,14 +1,14 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:multi_stack_navigator/common/pages.dart';
-import 'package:multi_stack_navigator/common/platform_tabs_page.dart';
+import 'package:multi_stack_navigator/common/platform_multi_stack_wrapper.dart';
 import 'package:multi_stack_navigator/common/routes.dart';
 import 'package:multi_stack_navigator/multi_stack_navigator.dart';
 import 'package:multi_stack_navigator/src/custom_route_information_parser.dart';
 import 'package:multi_stack_navigator/src/navigation_stack.dart';
 
 void main() {
-  late TabRoutesConfig config;
+  late TabRouterConfig config;
   TestWidgetsFlutterBinding.ensureInitialized();
   late CustomRouteInformationParser parser;
   RouteInformation? routeInformation;
@@ -17,12 +17,13 @@ void main() {
 
   group('CustomRouteInformationParser', () {
     setUp(() {
-      config = TabRoutesConfig.create(
+      config = TabRouterConfig.create(
           routes: tabRoutes,
           routeNotFoundPath: routeNotFoundPath,
           observer: LocationObserver(),
-          tabPageBuider: (context, tabRoutes, view, controller) => PlatformTabsPage(
-              tabRoutes: tabRoutes, view: view, controller: controller));
+          tabPageBuider: (context, tabRoutes, view, controller) =>
+              PlatformMultiStackWrapper(
+                  tabRoutes: tabRoutes, view: view, controller: controller));
 
       parser = config.routeInformationParser as CustomRouteInformationParser;
     });
