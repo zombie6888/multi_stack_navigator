@@ -16,12 +16,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final config = TabRoutesConfig.create(
+        defaultPageBuilder: (child) =>
+            PlatformPageFactory.getPage(child: child),
         routes: tabRoutes,
         routeNotFoundPath: RouteNotFoundPath(
             path: '/not_found', child: const RouteNotFoundPage()),
         observer: LocationObserver(),
-        builder: (context, tabRoutes, view, controller) => PlatformTabsPage(
-            tabRoutes: tabRoutes, view: view, controller: controller));
+        tabPageBuider: (context, tabRoutes, view, controller) =>
+            PlatformTabsPage(
+                tabRoutes: tabRoutes, view: view, controller: controller));
 
     return MaterialApp.router(
       theme: ThemeData(

@@ -28,7 +28,7 @@ void main() {
           routeNotFoundPath: RouteNotFoundPath(
               path: '/not_found', child: const RouteNotFoundPage()),
           observer: LocationObserver(),
-          builder: (context, tabRoutes, view, controller) => PlatformTabsPage(
+          tabPageBuider: (context, tabRoutes, view, controller) => PlatformTabsPage(
               tabRoutes: tabRoutes, view: view, controller: controller));
     });
     testWidgets('HomeScreen loaded', (WidgetTester tester) async {
@@ -140,7 +140,7 @@ void main() {
           routeNotFoundPath: RouteNotFoundPath(
               path: '/not_found', child: const RouteNotFoundPage()),
           observer: LocationObserver(),
-          builder: (context, tabRoutes, view, controller) => PlatformTabsPage(
+          tabPageBuider: (context, tabRoutes, view, controller) => PlatformTabsPage(
               tabRoutes: tabRoutes, view: view, controller: controller));
       parser = config.routeInformationParser as CustomRouteInformationParser;
       delegate = config.routerDelegate as TabRoutesDelegate;

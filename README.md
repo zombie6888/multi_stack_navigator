@@ -49,7 +49,7 @@ Use RoutePath.branch constructor for nested route/tab pages. You can pass page w
 ```dart
 final config = TabRoutesConfig.create(
         routes: tabRoutes,     
-        builder: (context, tabRoutes, view, controller) => PlatformTabsPage(
+        tabPageBuider: (context, tabRoutes, view, controller) => PlatformTabsPage(
             tabRoutes: tabRoutes, view: view, controller: controller));
 ```
 
@@ -114,7 +114,7 @@ Approuter is inherited widget, which is not add widget to dependants by default.
 
 ## Route not found functionality
 
-You can pass route, which will be used, if router can't find route path:
+You can pass route, which is used, when router can't find route path:
 
 ```dart
 final routeNotFoundPath =
@@ -122,7 +122,7 @@ final routeNotFoundPath =
 final config = TabRoutesConfig.create(
           ...
           routeNotFoundPath: routeNotFoundPath,
-          builder: ...);
+          tabPageBuider: ...);
 ```
 
 You can set uri and widget/builder for this page.
@@ -151,14 +151,10 @@ You can create your own navigation observer by extending NavigationObserver or u
 final config = TabRoutesConfig.create(
           ...
           observer: LocationObserver(),
-          builder: ...);
+          tabPageBuider: ...);
 ```
 
 There is no unneccessary rebuilds on current page when you push or pop other route, or switching to another tab. But if you want to rebuild something or run some callback on current page, when navigation events occurs, you can use LocationObserver stream.
-
-## Deep linking
-
-Deep links is supported by this package. You can directly access to any path of your routes configuration. 
 
 ## Hardware back button behavior
 
@@ -187,5 +183,23 @@ class MyCustomBackButtonDispatcher extends RootBackButtonDispatcher {
 final config = TabRoutesConfig.create(
           ...
           backButtonDispatcher: MyCustomBackButtonDispatcher,
-          builder: ...);
+          tabPageBuider: ...);
 ```
+
+## Custom page transitions
+
+You can define default page transitions by providing custom page builder to configuration: 
+
+```dart
+final config = TabRoutesConfig.create(
+          ...
+          defaultPageBuilder: (child) => MyCustomPageBuilder(child),
+          tabPageBuider: ...);
+```
+
+and you can override default page builder from configaration by page builder for specific routepath: 
+
+```dart
+RoutePath('/page6', const Page6(),
+      pageBuilder: (child) => MaterialPage)),
+ ```           

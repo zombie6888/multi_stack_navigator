@@ -13,9 +13,9 @@ import 'tab_routes_delegate.dart';
 ///
 /// The[routeNotFoundPath] route will be displayed,
 /// when routepath not found.
-/// 
-/// [backButtonDispatcher] handles hardware back button behavior 
-/// (mostly android hardware back button). By default it's a [RootBackButtonDispatcher], 
+///
+/// [backButtonDispatcher] handles hardware back button behavior
+/// (mostly android hardware back button). By default it's a [RootBackButtonDispatcher],
 ///  which will call [TabRoutesDelegate.popRoute] callback, but can be replaced
 ///  with [BackButtonListener] callback.
 /// - see [RootBackButtonDispatcher], [ChildBackButtonDispatcher],
@@ -29,11 +29,16 @@ class TabRoutesConfig extends RouterConfig<NavigationStack> {
       {required List<RoutePath> routes,
       RouteNotFoundPath? routeNotFoundPath,
       BackButtonDispatcher? backButtonDispatcher,
-      required TabPageBuilder builder,
+      PageBuilder? defaultPageBuilder,
+      required TabPageBuilder tabPageBuider,
       NavigationObserver? observer}) {
     final routeNotFound = routeNotFoundPath ?? RouteNotFoundPath();
-    final delegate =
-        TabRoutesDelegate(routes, builder, observer, routeNotFound);
+    final delegate = TabRoutesDelegate(
+        routes: routes,
+        defaultpageBuilder: defaultPageBuilder,
+        tabPageBuider: tabPageBuider,
+        observer: observer,
+        routeNotFoundPath: routeNotFound);
     return TabRoutesConfig(
         backButtonDispatcher:
             backButtonDispatcher ?? RootBackButtonDispatcher(),

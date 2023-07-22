@@ -1,5 +1,3 @@
-
-
 import 'package:multi_stack_navigator/multi_stack_navigator.dart';
 
 import 'pages.dart';
@@ -24,6 +22,10 @@ final tabRoutes = [
     RoutePath('/page2', const Page2()),
     RoutePath('/nestedtest/page7', const Page7()),
   ]),
-  RoutePath('/page6', const Page6()),
+  RoutePath('/page6', const Page6(),
+      pageBuilder: (child) =>
+          TransitionPage(
+            pushTransition: SlideDownTransition(),
+            popTransition: SlideDownTransition(), child: child)),
   RoutePath('/page7', const RedirectWidget(path: '/tab3/nestedtest/page7')),
 ];

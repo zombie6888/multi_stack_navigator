@@ -18,6 +18,7 @@ class RoutePath {
       {this.queryParams,
       this.params,
       this.builder,
+      this.pageBuilder,
       List<RoutePath> children = const [],
       this.navigatorKey})
       : children = List.unmodifiable(children);
@@ -30,12 +31,13 @@ class RoutePath {
   ///
   RoutePath.branch(this.path, this.children,
       {this.queryParams, this.params, this.builder})
-      : widget = null,
+      : widget = null, pageBuilder = null,
         navigatorKey = GlobalKey<NavigatorState>();
 
   RoutePath.builder(this.path, this.builder,
       {this.queryParams,
       this.params,
+      this.pageBuilder,
       List<RoutePath> children = const [],
       this.navigatorKey})
       : children = List.unmodifiable(children),
@@ -55,6 +57,7 @@ class RoutePath {
   /// Can use builder or widget as page child
   final Widget? widget;
   final WidgetBuilder? builder;
+  final Page<dynamic> Function(Widget child)? pageBuilder;
 
   /// Navigator key for parent [Navigator]. Used by [AppRouter]
   /// to get state of nested navigator
@@ -76,6 +79,7 @@ class RoutePath {
           queryParams: queryParams ?? this.queryParams,
           children: children ?? this.children,
           params: params,
+          pageBuilder: pageBuilder,
           builder: builder);
 
   @override

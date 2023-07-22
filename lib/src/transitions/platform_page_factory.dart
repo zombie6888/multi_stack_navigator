@@ -9,9 +9,8 @@ import 'transition_builders.dart';
 class TransitionPage<T> extends TransitionBuilderPage<T> {
   /// Initialize a transition page.
   ///
-  /// If [pushTransition] or [popAnimation] are null, the platform default
-  /// transition is used. This is the Cupertino animation on iOS and macOS, and
-  /// the fade upwards animation on all other platforms.
+  /// If [pushTransition] or [popAnimation] are null, 
+  /// the SlideLeftTransition transition is used.
   const TransitionPage({
     required Widget child,
     this.pushTransition,
@@ -60,34 +59,32 @@ class TransitionPage<T> extends TransitionBuilderPage<T> {
   }
 }
 
+enum PageInitialPosition { right, down, up }
 
-enum AnimationDirection { left, down, up, right }
-
-// TODO: Change left to right and rename classes
 class PlatformPageFactory {
   static Page<dynamic> getPage(
-      {AnimationDirection direction = AnimationDirection.left,
+      {PageInitialPosition initialPosition = PageInitialPosition.right,
       LocalKey? key,
       String location = '',
       String routePath = '',
       String? restorationId,
       required Widget child}) {
-      if (!kIsWeb && Platform.isIOS) {
+    if (!kIsWeb && Platform.isIOS) {
       return CupertinoPage(child: child);
     } else {
       PageTransition transition = SlideLeftTransition();
-      if (direction == AnimationDirection.left) {
+      if (initialPosition == PageInitialPosition.right) {
         transition = SlideLeftTransition();
       }
-      if (direction == AnimationDirection.up) {
+      if (initialPosition == PageInitialPosition.up) {
         transition = SlideUpTransition();
       }
-      if (direction == AnimationDirection.down) {
+      if (initialPosition == PageInitialPosition.down) {
         transition = SlideDownTransition();
       }
       return TransitionPage(
           key: key,
-          restorationId: restorationId,          
+          restorationId: restorationId,
           pushTransition: transition,
           popTransition: transition,
           child: child);

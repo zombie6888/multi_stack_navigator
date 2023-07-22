@@ -21,7 +21,7 @@ void main() {
           routes: tabRoutes,
           routeNotFoundPath: routeNotFoundPath,
           observer: LocationObserver(),
-          builder: (context, tabRoutes, view, controller) => PlatformTabsPage(
+          tabPageBuider: (context, tabRoutes, view, controller) => PlatformTabsPage(
               tabRoutes: tabRoutes, view: view, controller: controller));
 
       parser = config.routeInformationParser as CustomRouteInformationParser;

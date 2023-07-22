@@ -9,11 +9,12 @@ import 'navigation_stack.dart';
 import 'route_path.dart';
 import 'route_utils.dart';
 import 'tab_stack_builder.dart';
-import 'transitions/platform_page_factory.dart';
 
 // Builder for tabs. Provide way to
 typedef TabPageBuilder = Widget Function(BuildContext context,
     Iterable<RoutePath> tabRoutes, TabBarView view, TabController controller);
+
+typedef PageBuilder = Page<dynamic> Function(Widget child)?;    
 
 /// Router delagate for tabs navigation.
 ///
@@ -33,15 +34,24 @@ typedef TabPageBuilder = Widget Function(BuildContext context,
 class TabRoutesDelegate extends RouterDelegate<NavigationStack>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin
     implements CustomRouteDelegate {
-  TabRoutesDelegate(List<RoutePath> routes, this.tabPageBuider, this.observer,
-      RouteNotFoundPath routeNotFoundPath)
+  TabRoutesDelegate(
+      {required List<RoutePath> routes,
+      required this.tabPageBuider,
+      this.observer,
+      PageBuilder defaultpageBuilder,
+      required RouteNotFoundPath routeNotFoundPath})
       : _routes = List.unmodifiable(routes),
         _routeNotFoundPath = routeNotFoundPath,
+        _defaultPageBuilder = defaultpageBuilder,
         _rootNavigatorKey = GlobalKey<NavigatorState>();
 
   /// Route for page, which will be desplayed when route not found
   ///
   final RouteNotFoundPath _routeNotFoundPath;
+
+  /// Page builder for routepath
+  ///
+  final PageBuilder _defaultPageBuilder;
 
   /// Observes navigation events
   ///
@@ -86,10 +96,7 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
   Widget getNestedNavigator(int index, BuildContext context) {
     final rootRoute = _stack.routes[index];
     final nestedPages = rootRoute.children
-        .map(
-          (route) => PlatformPageFactory.getPage(
-              child: _createPage(route, rootRoute.navigatorKey)),
-        )
+        .map((route) => _createPage(route, rootRoute.navigatorKey))
         .toList();
 
     if (nestedPages.isEmpty) {
@@ -161,36 +168,36 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
   }
 
   /// Hardware back button default handler
-  /// 
+  ///
   /// It will pop single or tab nested page. If current active route
-  /// is a tab nested page, nested navigator pop method will be called, 
+  /// is a tab nested page, nested navigator pop method will be called,
   /// for a single page it calls [_rootNavigatorKey.currentState.pop].
-  /// 
+  ///
   /// If current route is a tab root page route it will switch to previous tab,
   /// until initial tab will be reached. From root page of initial tab it will
   /// close the entire application.
-  /// 
-  /// If return value is false, it will pass control to system and app will be 
-  /// closed in most of cases. 
+  ///
+  /// If return value is false, it will pass control to system and app will be
+  /// closed in most of cases.
   /// - see [RouterDelegate.popRoute]
-  /// 
+  ///
   /// This behaviour can be overrided by [BackButtonListener]
-  /// or [HardwareBackHandler]. 
-  /// 
-  /// When [BackButtonListener] state disposed, this callback will continue 
-  /// to handle back behavior. The state of any nested page will only be 
-  /// disposed, when navigator pop event occurs. It will cause listener 
-  /// to continue handle back behavior, even if page is not active (active tab 
-  /// index was changed or another nested page was pushed). In order to prevent 
+  /// or [HardwareBackHandler].
+  ///
+  /// When [BackButtonListener] state disposed, this callback will continue
+  /// to handle back behavior. The state of any nested page will only be
+  /// disposed, when navigator pop event occurs. It will cause listener
+  /// to continue handle back behavior, even if page is not active (active tab
+  /// index was changed or another nested page was pushed). In order to prevent
   /// this case, consider to use [HardwareBackHandler], which is listening for
-  /// navigation events and will pass controll back to this handler, 
+  /// navigation events and will pass controll back to this handler,
   /// if any of navigation event occurs.
   ///
   @override
-  Future<bool> popRoute() {   
+  Future<bool> popRoute() {
     final branchRoutes =
         _stack.routes.where((r) => r.children.isNotEmpty).toList();
-    
+
     if (branchRoutes.length == _stack.routes.length) {
       final nestedNavigator = branchRoutes[_stack.currentIndex].navigatorKey;
       if (nestedNavigator?.currentState?.canPop() ?? false) {
@@ -199,17 +206,17 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
       } else if (_stack.currentIndex > 0) {
         // switch tab
         _tabIndexUpdateHandler(_stack.currentIndex - 1);
-      } else {      
+      } else {
         // close app
         return SynchronousFuture(false);
-      }   
+      }
     } else {
       if (_rootNavigatorKey.currentState?.canPop() ?? false) {
-        // root route pop 
+        // root route pop
         _rootNavigatorKey.currentState?.pop();
       }
     }
-    // do not close app
+    // do not close
     return SynchronousFuture(true);
   }
 
@@ -261,9 +268,9 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
     // Fix this behavior (if posssible) or replace  _routeNotFoundPath.
     // with splash screen. Ensure that deep links are working.
     final routes = _stack.routes.isEmpty ? [_routeNotFoundPath] : _stack.routes;
-    final pages = routes.where((e) => e.children.isEmpty).map(
-          (route) => PlatformPageFactory.getPage(child: _createPage(route)),
-        );
+    final pages = routes
+        .where((e) => e.children.isEmpty)
+        .map((route) => _createPage(route));
 
     final tabRoutes = routes.where((e) => e.children.isNotEmpty);
 
@@ -317,15 +324,22 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
   /// [AppRouter.routerDelegate] field is using for [TabRoutesDelegate] access.
   /// [AppRouter.routePath] contains current route path.
   ///
-  AppRouter _createPage(RoutePath route,
+  Page<dynamic> _createPage(RoutePath route,
       [GlobalKey<NavigatorState>? navigatorKey]) {
-    return AppRouter(
+    final page = AppRouter(
         navigatorKey: navigatorKey ?? _rootNavigatorKey,
         routePath: route,
         routerDelegate: this,
         child: Builder(builder: (context) {
           return route.widget ?? route.builder?.call(context) ?? Container();
         }));
+    if (route.pageBuilder != null) {
+      return route.pageBuilder!(page);
+    } else if (_defaultPageBuilder != null) {
+      return _defaultPageBuilder!(page);
+    } else {
+      return MaterialPage(child: page);
+    }
   }
 
   /// Calling when get back from nested page.
@@ -433,7 +447,7 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
 
   /// Convert route related path to absoulte path
   String? _getAbsolutePath(String path) {
-    final parentPath = _getParentLocation();  
+    final parentPath = _getParentLocation();
     if (parentPath != null) {
       final branchRoutes = _routes.where((r) => r.children.isNotEmpty).toList();
       final targetRoute = RouteParseUtils.searchRoute(
