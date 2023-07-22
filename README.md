@@ -160,4 +160,32 @@ There is no unneccessary rebuilds on current page when you push or pop other rou
 
 Deep links is supported by this package. You can directly access to any path of your routes configuration. 
 
+## Hardware back button behavior
 
+When you tap android back button, default handler will be called. It will try to pop nested page 
+or root page, otherwise, if tab root page is active, it will try to switch to previuos tab. When you tap on the root page of the first tab it will pop entire application.
+
+You can override this behavior by using HardwareBackHandler widget from any widget of any page: 
+
+```dart
+HardwareBackHandler(
+      onBackButtonPressed: () {
+        // returning false will close the application
+        return Future.value(true);
+      },
+      child: ...
+...      
+```
+
+If you want to change default behavior for entire application, you can pass your own BackButtonDispatcher to router config:
+
+```dart
+class MyCustomBackButtonDispatcher extends RootBackButtonDispatcher {
+  ...
+}
+...
+final config = TabRoutesConfig.create(
+          ...
+          backButtonDispatcher: MyCustomBackButtonDispatcher,
+          builder: ...);
+```
