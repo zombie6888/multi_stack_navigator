@@ -53,6 +53,12 @@ void main() {
       await tester.pump();
       expect(find.text('page1'), findsWidgets);
     });
+    testWidgets('Switch tab', (WidgetTester tester) async {
+      await loadApp(tester);
+      await tester.tap(find.text('tab2'));
+      await tester.pump();
+      expect(find.text('page1'), findsWidgets);
+    });
     testWidgets('Push a tab nested page', (WidgetTester tester) async {
       await loadApp(tester);
       await tester.tap(find.byKey(const Key('btn_tab2_page5')));
@@ -240,6 +246,62 @@ void main() {
       expect(find.text('page6'), findsWidgets);
       await tester.tap(find.byKey(const Key('back_btn')));
       await tester.pumpAndSettle();
+      expect(find.text('home'), findsWidgets);
+    });
+    testWidgets('Hardware back press on a single page route',
+        (WidgetTester tester) async {
+      await loadApp(tester);
+      await tester.tap(find.byKey(const Key('btn_page6')));
+      await tester.pumpAndSettle();
+      expect(find.text('page6'), findsWidgets);
+      // await tester.tap(find.byKey(const Key('back_btn')));
+      delegate.popRoute();
+      await tester.pump();
+      expect(find.text('home'), findsWidgets);
+    });
+    testWidgets('Hardware back press on a tab nested page route',
+        (WidgetTester tester) async {
+      await loadApp(tester);
+      await tester.tap(find.byKey(const Key('btn_tab1_page4')));
+      await tester.pumpAndSettle();
+      expect(find.text('page4'), findsWidgets);
+      await tester.tap(find.byKey(const Key('btn_tab1_nestedtest_page7')));
+      await tester.pumpAndSettle();
+      expect(find.text('page7'), findsWidgets);
+      delegate.popRoute();
+      await tester.pump();
+      expect(find.text('page4'), findsWidgets);
+      delegate.popRoute();
+      await tester.pump();
+      expect(find.text('home'), findsWidgets);
+    });
+    testWidgets('Hardware back press listener overrides',
+        (WidgetTester tester) async {
+      await loadApp(tester);
+      await tester.tap(find.byKey(const Key('btn_tab1_page4')));
+      await tester.pumpAndSettle();
+      expect(find.text('page4'), findsWidgets);
+      await tester.tap(find.byKey(const Key('btn_tab1_nestedtest_page7')));
+      await tester.pumpAndSettle();
+      expect(find.text('page7'), findsWidgets);
+      await tester.tap(find.byKey(const Key('btn_tab1_page5')));
+      await tester.pump();
+      expect(find.text('page5'), findsWidgets);
+      delegate.popRoute();
+      await tester.pump();
+      expect(find.text('page5'), findsWidgets);
+    });
+    testWidgets('Hardware back press root tab pages',
+        (WidgetTester tester) async {
+      await loadApp(tester);
+      await tester.tap(find.text('tab3'));
+      await tester.pump();
+      expect(find.text('page2'), findsWidgets);
+      delegate.popRoute();
+      await tester.pump();
+      expect(find.text('page1'), findsWidgets);
+      delegate.popRoute();
+      await tester.pump();
       expect(find.text('home'), findsWidgets);
     });
   });

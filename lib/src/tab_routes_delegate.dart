@@ -201,7 +201,7 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
         _tabIndexUpdateHandler(_stack.currentIndex - 1);
       } else {      
         // close app
-        return Future.value(false);
+        return SynchronousFuture(false);
       }   
     } else {
       if (_rootNavigatorKey.currentState?.canPop() ?? false) {
@@ -209,7 +209,8 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
         _rootNavigatorKey.currentState?.pop();
       }
     }
-    return Future.value(true);
+    // do not close app
+    return SynchronousFuture(true);
   }
 
   /// Replace current active route with route of [targetLocation].
@@ -432,8 +433,7 @@ class TabRoutesDelegate extends RouterDelegate<NavigationStack>
 
   /// Convert route related path to absoulte path
   String? _getAbsolutePath(String path) {
-    final parentPath = _getParentLocation();
-    //final utils = RouteParseUtils(path);
+    final parentPath = _getParentLocation();  
     if (parentPath != null) {
       final branchRoutes = _routes.where((r) => r.children.isNotEmpty).toList();
       final targetRoute = RouteParseUtils.searchRoute(

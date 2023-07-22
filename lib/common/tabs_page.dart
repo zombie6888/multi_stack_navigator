@@ -20,7 +20,7 @@ class TabsPage extends StatelessWidget {
             type: BottomNavigationBarType.fixed,
             items: <BottomNavigationBarItem>[
               for (var route in tabRoutes)
-                BottomNavigationBarItem(
+                BottomNavigationBarItem(                
                   icon: const Icon(Icons.home),
                   label: route.path,
                 )
