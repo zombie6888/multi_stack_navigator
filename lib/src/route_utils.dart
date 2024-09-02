@@ -133,6 +133,20 @@ class RouteParseUtils {
           routes: rootStack, currentLocation: rootStack.last.path);
     }
 
+    // add route to root stack
+    if (rootRoute != null && rootRoute.children.isNotEmpty) {
+      final routeIndex = routes.indexWhere((e) => e.path == _uri.path);
+      if (routeIndex >= 0) {
+        final onlyBranchRoutes =
+            routes.where((r) => r.children.isNotEmpty).toList();
+        final targetStack = stack.copyWith(
+            currentIndex: routeIndex,
+            routes: onlyBranchRoutes,
+            currentLocation: routes[routeIndex].path);
+        return targetStack;
+      }
+    }
+
     // add route to nested stack
     if (parentPath != null) {
       final targetRoute = routes.firstWhereOrNull((e) => e.path == parentPath);
@@ -274,12 +288,12 @@ class RouteParseUtils {
   }) {
     final lastRoute = currentStack.routes.last;
     // redirect to root page
-    if (lastRoute.children.isEmpty) {
+    if (lastRoute.children.isEmpty) {   
       targetStack = targetStack.copyWith(
           routes: targetStack.routes
               .where((e) => e.path != currentStack.currentLocation)
               .toList());
-    } else {
+    } else {     
       // redirect to nested page of another parent route
       if (targetStack.currentIndex != currentStack.currentIndex) {
         final route = targetStack.routes[currentStack.currentIndex];

@@ -8,12 +8,13 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  collection: ^1.17.1
+  collection: ^1.17.2
   flutter:
-    sdk: flutter
+    sdk: flutter  
   uri: ^1.0.0
 
 dev_dependencies:
+  matcher: ^0.12.16
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0

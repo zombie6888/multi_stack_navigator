@@ -28,7 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  url_strategy: ^0.2.0
+  url_strategy: ^0.3.0
   multi_stack_navigator:
     path: ../
   flutter:

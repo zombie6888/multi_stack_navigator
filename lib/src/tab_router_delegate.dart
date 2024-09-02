@@ -14,7 +14,7 @@ import 'tab_stack_builder.dart';
 typedef TabPageBuilder = Widget Function(BuildContext context,
     Iterable<RoutePath> tabRoutes, TabBarView view, TabController controller);
 
-typedef PageBuilder = Page<dynamic> Function(Widget child)?;    
+typedef PageBuilder = Page<dynamic> Function(Widget child)?;
 
 /// Router delagate for tabs navigation.
 ///
@@ -96,7 +96,7 @@ class TabRouterDelegate extends RouterDelegate<NavigationStack>
   Widget getNestedNavigator(int index, BuildContext context) {
     final rootRoute = _stack.routes[index];
     final nestedPages = rootRoute.children
-        .map((route) => _createPage(route, rootRoute.navigatorKey))
+        .map((route) => _createPage(route, rootRoute.navigatorKey, rootRoute))
         .toList();
 
     if (nestedPages.isEmpty) {
@@ -157,7 +157,7 @@ class TabRouterDelegate extends RouterDelegate<NavigationStack>
     final newStack = utils.updateNavigationStack(_routes, _stack);
     observer?.didPushRoute(newStack.currentLocation);
 
-    if (isRedirect) {
+    if (isRedirect) {     
       final redirectStack =
           utils.getRedirectStack(currentStack: _stack, targetStack: newStack);
       setNewRoutePath(redirectStack);
@@ -272,29 +272,37 @@ class TabRouterDelegate extends RouterDelegate<NavigationStack>
         .where((e) => e.children.isEmpty)
         .map((route) => _createPage(route));
 
-    final tabRoutes = routes.where((e) => e.children.isNotEmpty);
+    final tabRoutes = routes.where((e) => e.children.isNotEmpty).toList();    
+    final currentPath =
+          tabRoutes.isNotEmpty ? tabRoutes[_stack.currentIndex] : null;
 
     return Navigator(
         key: _rootNavigatorKey,
         pages: [
           if (tabRoutes.isNotEmpty)
             MaterialPage(
-              child: TabStackBuilder(
-                  index: _stack.currentIndex,
-                  tabIndexUpdateHandler: _tabIndexUpdateHandler,
-                  tabsLenght: tabRoutes.length,
-                  builder: (context, controller) {
-                    final view = TabBarView(
-                      controller: controller,
-                      children: [
-                        for (var i = 0; i < tabRoutes.length; i++)
-                          KeepAliveWidget(
-                              key: ValueKey('tab_stack_${i.toString()}'),
-                              child: getNestedNavigator(i, context)),
-                      ],
-                    );
-                    return tabPageBuider(context, tabRoutes, view, controller);
-                  }),
+              child: AppRouter(
+                routePath: currentPath!,
+                routerDelegate: this,
+                navigatorKey: _rootNavigatorKey,
+                child: TabStackBuilder(
+                    index: _stack.currentIndex,
+                    tabIndexUpdateHandler: _tabIndexUpdateHandler,
+                    tabsLenght: tabRoutes.length,
+                    builder: (context, controller) {
+                      final view = TabBarView(
+                        controller: controller,
+                        children: [
+                          for (var i = 0; i < tabRoutes.length; i++)
+                            KeepAliveWidget(
+                                key: ValueKey('tab_stack_${i.toString()}'),
+                                child: getNestedNavigator(i, context)),
+                        ],
+                      );
+                      return tabPageBuider(
+                          context, tabRoutes, view, controller);
+                    }),
+              ),
             ),
           ...pages
         ],
@@ -325,10 +333,11 @@ class TabRouterDelegate extends RouterDelegate<NavigationStack>
   /// [AppRouter.routePath] contains current route path.
   ///
   Page<dynamic> _createPage(RoutePath route,
-      [GlobalKey<NavigatorState>? navigatorKey]) {
+      [GlobalKey<NavigatorState>? navigatorKey, RoutePath? parentRoute]) {
     final page = AppRouter(
         navigatorKey: navigatorKey ?? _rootNavigatorKey,
         routePath: route,
+        parentPath: parentRoute,
         routerDelegate: this,
         child: Builder(builder: (context) {
           return route.widget ?? route.builder?.call(context) ?? Container();

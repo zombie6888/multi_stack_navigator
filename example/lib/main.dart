@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:url_strategy/url_strategy.dart';
+
 import 'package:multi_stack_navigator/common/pages.dart';
 import 'package:multi_stack_navigator/common/platform_multi_stack_wrapper.dart';
 import 'package:multi_stack_navigator/common/routes.dart';
-import 'package:url_strategy/url_strategy.dart';
 import 'package:multi_stack_navigator/multi_stack_navigator.dart';
 
 void main() {

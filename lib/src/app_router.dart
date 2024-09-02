@@ -7,13 +7,21 @@ import 'route_path.dart';
 class AppRouter extends InheritedWidget {
   const AppRouter({
     super.key,
-    required this.routePath,
+    required RoutePath routePath,
     required this.routerDelegate,
     this.navigatorKey,
+    RoutePath? parentPath,
     required super.child,
-  });
+  })  : _routePath = routePath,
+        _parentPath = parentPath;
 
-  final RoutePath routePath;
+  final RoutePath _routePath;
+  final RoutePath? _parentPath;
+
+  String get path => _routePath.path == '/' && _parentPath != null
+      ? _parentPath!.path
+      : _routePath.path;
+
   final GlobalKey<NavigatorState>? navigatorKey;
   final CustomRouteDelegate routerDelegate;
 
@@ -24,21 +32,26 @@ class AppRouter extends InheritedWidget {
     return null;
   }
 
-  void navigate(String path) {
-    routerDelegate.navigate(path);
+  NavigationObserver? get observer => routerDelegate.observer;
+
+  void navigate(String path, {Map<String, dynamic>? queryParameters}) {
+    final routePath = _addQueryParameters(path, queryParameters);
+    routerDelegate.navigate(routePath);
   }
 
-  void replaceWith(String path) {
-    routerDelegate.replaceCurrentRoute(path);
+  void replaceWith(String path, {Map<String, dynamic>? queryParameters}) {
+    final routePath = _addQueryParameters(path, queryParameters);
+    routerDelegate.replaceCurrentRoute(routePath);
   }
 
-  void redirect(String path) {
+  void redirect(String path, {Map<String, dynamic>? queryParameters}) {
+    final routePath = _addQueryParameters(path, queryParameters);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      routerDelegate.navigate(path, true);
+      routerDelegate.navigate(routePath, true);
     });
   }
 
-  pop() {
+  void pop() {
     final navigator = navigatorKey?.currentState;
     assert(navigator != null, 'No navigator found');
     navigator?.pop();
@@ -58,7 +71,35 @@ class AppRouter extends InheritedWidget {
     return result!;
   }
 
+  T? queryParameter<T>(String key) {
+    final params = _routePath.queryParams;
+    if (params == null) {
+      return null;
+    }
+    final value = params[key];
+    switch (T) {
+      case int:
+        return value != null ? int.tryParse(value) as T : null;
+      case String:
+      default:
+        return value is T ? value as T : null;
+    }
+  }
+
+  String _addQueryParameters(
+      String path, Map<String, dynamic>? queryParameters) {
+    if (queryParameters != null) {
+      final uri = Uri.parse(path);
+      Map<String, String> stringQueryParameters =
+          queryParameters.map((key, value) => MapEntry(key, value!.toString()));
+      final fullUri = uri.replace(
+          queryParameters: {...uri.queryParameters, ...stringQueryParameters});
+      return fullUri.toString();
+    }
+    return path;
+  }
+
   @override
   bool updateShouldNotify(AppRouter oldWidget) =>
-      oldWidget.routePath != routePath;
+      oldWidget._routePath != _routePath;
 }
