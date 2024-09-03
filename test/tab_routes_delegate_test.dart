@@ -58,7 +58,7 @@ void main() {
       });
       test('Push nested route', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/')));
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.currentIndex, 0);
         delegate.navigate('/tab2/page5');
@@ -69,7 +69,7 @@ void main() {
       });
       test('Push nested routes with different query parameters', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/')));
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.currentIndex, 0);
         delegate.navigate('/tab2/page1?test=1');
@@ -89,7 +89,7 @@ void main() {
       });
       test('Push nested replace route', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/')));
         await delegate.setNewRoutePath(stack);
         delegate.navigate('/tab2/page1');
         delegate.navigate('/tab2/page5');
@@ -107,7 +107,7 @@ void main() {
       });
       test('Push between tabs', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/')));
         delegate.setNewRoutePath(stack);
         delegate.navigate('/tab2/page1');
         delegate.navigate('/tab2/page5');
@@ -131,7 +131,7 @@ void main() {
       });
       test('Push between tabs with query parameters', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/')));
         await delegate.setNewRoutePath(stack);
         delegate.navigate('/tab2/page1');
         delegate.navigate('/tab2/page5?test=1');
@@ -155,7 +155,7 @@ void main() {
       });
       test('Push tab root route', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/')));
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.currentIndex, 0);
         delegate.navigate('/tab2/page1');
@@ -166,7 +166,7 @@ void main() {
       });
       test('Push redirect from single route', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/')));
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.currentIndex, 0);
         delegate.navigate('/page6');
@@ -181,7 +181,7 @@ void main() {
       });
       test('Push redirect from nested route', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/')));
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.currentIndex, 0);
         delegate.navigate('/tab2/page5');
@@ -201,7 +201,7 @@ void main() {
       });
       test('Push redirect between tabs from nested route', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/')));
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.currentIndex, 0);
         delegate.navigate('/tab2/page5');
@@ -221,7 +221,7 @@ void main() {
       });
       test('Push related route', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/')));
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.currentIndex, 0);
         delegate.navigate('/tab2/page5');
@@ -240,9 +240,28 @@ void main() {
             RoutePath('/page6', null));
         expect(delegate.currentConfiguration?.currentLocation, '/page6');
       });
+      test('Push root branch route', () async {
+        final stack = await parser
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/')));
+        await delegate.setNewRoutePath(stack);
+        expect(delegate.currentConfiguration?.currentIndex, 0);
+        delegate.navigate('/tab2/page5');
+        expect(delegate.currentConfiguration?.currentIndex, 1);
+        expect(delegate.currentConfiguration?.routes[1].children.last,
+            RoutePath('/page5', null));
+        delegate.navigate('page6');       
+        expect(delegate.currentConfiguration?.routes.last,
+            RoutePath('/page6', null));
+        delegate.navigate('/tab1');    
+        // ensure tab is changed
+        expect(delegate.currentConfiguration?.currentIndex, 0);
+        expect(delegate.currentConfiguration?.currentLocation, '/tab1');
+        expect(delegate.currentConfiguration?.routes.last,
+            RoutePath('/tab3', null));        
+      });
       test('Replace nested route', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/')));
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.currentIndex, 0);
         delegate.navigate('/tab1/page4');
@@ -263,7 +282,7 @@ void main() {
       });
       test('Replace single route', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/')));
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.currentIndex, 0);
         delegate.navigate('/page6');
@@ -278,7 +297,7 @@ void main() {
       });
       test('Replace single route with different params', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/')));
         delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.currentIndex, 0);
         delegate.navigate('/page6?test=1');
@@ -300,14 +319,14 @@ void main() {
     group('Set route from platform', () {
       test('Deep link to root route', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/page6'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/page6')));
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.routes.last,
             RoutePath('/page6', null));
       });
       test('Deep link to tab root route', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/tab1'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/tab1')));
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.routes[0].children.last,
             RoutePath('/', null));
@@ -317,14 +336,14 @@ void main() {
       });
       test('Deep link with query params', () async {
         final stack = await parser.parseRouteInformation(
-            const RouteInformation(location: '/page6?test=1'));
+           RouteInformation(uri: Uri.parse('/page6?test=1')));
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.routes.last,
             RoutePath('/page6', null, queryParams: {'test': '1'}));
       });
       test('Deep link to tab route', () async {
         final stack = await parser.parseRouteInformation(
-            const RouteInformation(location: '/tab2/page1'));
+           RouteInformation(uri: Uri.parse('/tab2/page1')));
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.routes[1].children.last,
             RoutePath('/page1', null));
@@ -333,7 +352,7 @@ void main() {
       });
       test('Deep link to tab nested route', () async {
         final stack = await parser.parseRouteInformation(
-            const RouteInformation(location: '/tab3/nestedtest/page7'));
+            RouteInformation(uri: Uri.parse('/tab3/nestedtest/page7')));
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.routes[2].children.last,
             RoutePath('/nestedtest/page7', null));
@@ -343,7 +362,7 @@ void main() {
       });
       test('Deep link with unknown route', () async {
         final stack = await parser.parseRouteInformation(
-            const RouteInformation(location: '/fakeroute'));
+            RouteInformation(uri: Uri.parse('/fakeroute')));
         await delegate.setNewRoutePath(stack);
         expect(delegate.currentConfiguration?.routes.last, routeNotFoundPath);
         expect(delegate.currentConfiguration?.currentLocation, '/not_found');

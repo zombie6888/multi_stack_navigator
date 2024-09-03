@@ -30,7 +30,7 @@ void main() {
     group('Convert route infromation to configarion', () {
       test('Deep link to root route', () async {
         final stack = await parser
-            .parseRouteInformation(const RouteInformation(location: '/page6'));
+            .parseRouteInformation(RouteInformation(uri: Uri.parse('/page6')));
         expect(stack.routes.length, 4);
         expect(stack.routes[0].children.length, 1);
         expect(stack.routes[1].children.length, 1);
@@ -42,7 +42,7 @@ void main() {
       });
       test('Deep link to tab route', () async {
         final stack = await parser.parseRouteInformation(
-            const RouteInformation(location: '/tab2/page1'));
+            RouteInformation(uri: Uri.parse('/tab2/page1')));
         expect(stack.routes.length, 3);
         expect(stack.routes[0].children.length, 1);
         expect(stack.routes[1].children.length, 1);
@@ -54,7 +54,7 @@ void main() {
       });
       test('Deep link to tab nested route', () async {
         final stack = await parser.parseRouteInformation(
-            const RouteInformation(location: '/tab3/nestedtest/page7'));
+            RouteInformation(uri: Uri.parse('/tab3/nestedtest/page7')));
         expect(stack.routes.length, 3);
         expect(stack.routes[0].children.length, 1);
         expect(stack.routes[1].children.length, 1);
@@ -66,7 +66,7 @@ void main() {
       });
       test('Deep link with query parameters', () async {
         final stack = await parser.parseRouteInformation(
-            const RouteInformation(location: '/tab3/nestedtest/page7?test=1'));
+            RouteInformation(uri: Uri.parse('/tab3/nestedtest/page7?test=1')));
         expect(
           stack.routes[2].children.last,
           RoutePath('/nestedtest/page7', null, queryParams: {"test": "1"}),
@@ -77,7 +77,7 @@ void main() {
       test('Single (not a tab) route', () async {
         final configuration = NavigationStack([RoutePath('/page6', null)]);
         final routeInformation = parser.restoreRouteInformation(configuration);
-        expect(routeInformation?.location, '/page6');
+        expect(routeInformation?.uri.toString(), '/page6');
       });
       test('Tab route', () async {
         final configuration = NavigationStack([
@@ -92,10 +92,10 @@ void main() {
           ])
         ]);
         routeInformation = parser.restoreRouteInformation(configuration);
-        expect(routeInformation?.location, '/tab1');
+        expect(routeInformation?.uri.toString(), '/tab1');
         routeInformation = parser
             .restoreRouteInformation(configuration.copyWith(currentIndex: 1));
-        expect(routeInformation?.location, '/tab2/page1');
+        expect(routeInformation?.uri.toString(), '/tab2/page1');
       });
       test('Tab nested route', () async {
         final configuration = NavigationStack([
@@ -112,10 +112,10 @@ void main() {
           ])
         ], currentIndex: 2);
         routeInformation = parser.restoreRouteInformation(configuration);
-        expect(routeInformation?.location, '/tab3/nestedtest/page7');
+        expect(routeInformation?.uri.toString(), '/tab3/nestedtest/page7');
         routeInformation = parser
             .restoreRouteInformation(configuration.copyWith(currentIndex: 1));
-        expect(routeInformation?.location, '/tab2/page5');
+        expect(routeInformation?.uri.toString(), '/tab2/page5');
       });
       test('Tab single route above tab routes', () async {
         final configuration = NavigationStack([
@@ -131,7 +131,7 @@ void main() {
           RoutePath('/page6', null),
         ]);
         routeInformation = parser.restoreRouteInformation(configuration);
-        expect(routeInformation?.location, '/page6');
+        expect(routeInformation?.uri.toString(), '/page6');
       });
       test('Tab route with query parameters', () async {
         final configuration = NavigationStack([
@@ -146,14 +146,14 @@ void main() {
           ])
         ]);
         routeInformation = parser.restoreRouteInformation(configuration);
-        expect(routeInformation?.location, '/tab1?test=1');
+        expect(routeInformation?.uri.toString(), '/tab1?test=1');
       });
       test('Single route with query parameters', () async {
         final configuration = NavigationStack([
           RoutePath('/page6', null, queryParams: {"test": "1"})
         ]);
         final routeInformation = parser.restoreRouteInformation(configuration);
-        expect(routeInformation?.location, '/page6?test=1');
+        expect(routeInformation?.uri.toString(), '/page6?test=1');
       });
       test('Tab route with query parameters', () async {
         final configuration = NavigationStack([
@@ -168,12 +168,12 @@ void main() {
           ])
         ]);
         routeInformation = parser.restoreRouteInformation(configuration);
-        expect(routeInformation?.location, '/tab1?test=1');
+        expect(routeInformation?.uri.toString(), '/tab1?test=1');
       });
       test('Route not found', () async {
         final configuration = NavigationStack([routeNotFoundPath]);
         routeInformation = parser.restoreRouteInformation(configuration);
-        expect(routeInformation?.location, '/not_found');
+        expect(routeInformation?.uri.toString(), '/not_found');
       });
     });
   });

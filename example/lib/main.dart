@@ -8,25 +8,26 @@ import 'package:multi_stack_navigator/multi_stack_navigator.dart';
 
 void main() {
   setPathUrlStrategy();
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  final routeConfig = TabRouterConfig.create(
+      defaultPageBuilder: (child) => PlatformPageFactory.getPage(child: child),
+      routes: tabRoutes,
+      routeNotFoundPath: RouteNotFoundPath(
+          path: '/not_found', child: const RouteNotFoundPage()),
+      observer: LocationObserver(),
+      tabPageBuider: (context, tabRoutes, view, controller) =>
+          PlatformMultiStackWrapper(
+              tabRoutes: tabRoutes, view: view, controller: controller));
+  runApp(MyApp(config: routeConfig));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.config});
+
+  final TabRouterConfig config;
 
   @override
   Widget build(BuildContext context) {
-    final config = TabRouterConfig.create(
-        defaultPageBuilder: (child) =>
-            PlatformPageFactory.getPage(child: child),
-        routes: tabRoutes,
-        routeNotFoundPath: RouteNotFoundPath(
-            path: '/not_found', child: const RouteNotFoundPage()),
-        observer: LocationObserver(),
-        tabPageBuider: (context, tabRoutes, view, controller) =>
-            PlatformMultiStackWrapper(
-                tabRoutes: tabRoutes, view: view, controller: controller));
-
     return MaterialApp.router(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
