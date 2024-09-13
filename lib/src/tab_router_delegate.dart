@@ -105,8 +105,9 @@ class TabRouterDelegate extends RouterDelegate<NavigationStack>
           Container();
     }
 
-    return Navigator(
+    return Navigator(        
         key: _stack.routes[index].navigatorKey,
+        observers: [HeroController()],
         pages: nestedPages,
         onGenerateRoute: (settings) =>
             MaterialPageRoute(builder: (_) => Container()),
@@ -157,7 +158,7 @@ class TabRouterDelegate extends RouterDelegate<NavigationStack>
     final newStack = utils.updateNavigationStack(_routes, _stack);
     observer?.didPushRoute(newStack.currentLocation);
 
-    if (isRedirect) {     
+    if (isRedirect) {
       final redirectStack =
           utils.getRedirectStack(currentStack: _stack, targetStack: newStack);
       setNewRoutePath(redirectStack);
@@ -262,6 +263,8 @@ class TabRouterDelegate extends RouterDelegate<NavigationStack>
     }
   }
 
+  final _heroController = HeroController();
+
   @override
   Widget build(BuildContext context) {
     // TODO: First build occurs before setNewRoutePath called.
@@ -272,12 +275,13 @@ class TabRouterDelegate extends RouterDelegate<NavigationStack>
         .where((e) => e.children.isEmpty)
         .map((route) => _createPage(route));
 
-    final tabRoutes = routes.where((e) => e.children.isNotEmpty).toList();    
+    final tabRoutes = routes.where((e) => e.children.isNotEmpty).toList();
     final currentPath =
-          tabRoutes.isNotEmpty ? tabRoutes[_stack.currentIndex] : null;
+        tabRoutes.isNotEmpty ? tabRoutes[_stack.currentIndex] : null;
 
     return Navigator(
         key: _rootNavigatorKey,
+        observers: [_heroController],
         pages: [
           if (tabRoutes.isNotEmpty)
             MaterialPage(
