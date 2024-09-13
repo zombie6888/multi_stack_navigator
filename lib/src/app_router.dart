@@ -10,6 +10,7 @@ class AppRouter extends InheritedWidget {
     required RoutePath routePath,
     required this.routerDelegate,
     this.navigatorKey,
+    this.rootNavigatorKey,   
     RoutePath? parentPath,
     required super.child,
   })  : _routePath = routePath,
@@ -23,6 +24,7 @@ class AppRouter extends InheritedWidget {
       : _routePath.path;
 
   final GlobalKey<NavigatorState>? navigatorKey;
+  final GlobalKey<NavigatorState>? rootNavigatorKey;
   final CustomRouteDelegate routerDelegate;
 
   Stream<LocationUpdateData>? get locationUpdates {

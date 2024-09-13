@@ -285,6 +285,7 @@ class TabRouterDelegate extends RouterDelegate<NavigationStack>
                 routePath: currentPath!,
                 routerDelegate: this,
                 navigatorKey: _rootNavigatorKey,
+                rootNavigatorKey: _rootNavigatorKey,
                 child: TabStackBuilder(
                     index: _stack.currentIndex,
                     tabIndexUpdateHandler: _tabIndexUpdateHandler,
@@ -336,6 +337,7 @@ class TabRouterDelegate extends RouterDelegate<NavigationStack>
       [GlobalKey<NavigatorState>? navigatorKey, RoutePath? parentRoute]) {
     final page = AppRouter(
         navigatorKey: navigatorKey ?? _rootNavigatorKey,
+        rootNavigatorKey: _rootNavigatorKey,
         routePath: route,
         parentPath: parentRoute,
         routerDelegate: this,
