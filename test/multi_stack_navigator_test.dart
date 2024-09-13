@@ -73,7 +73,7 @@ void main() {
       await tester.pump();
       expect(find.text('page1'), findsWidgets);
       await tester.tap(find.byKey(const Key('btn_tab2_page5')));
-      await tester.pump();
+      await tester.pumpAndSettle();
       expect(find.text('page5'), findsWidgets);
     });
     testWidgets('Navigate between tabs', (WidgetTester tester) async {
@@ -81,8 +81,8 @@ void main() {
       await tester.tap(find.byKey(const Key('btn_tab2_page1')));
       await tester.pump();
       expect(find.text('page1'), findsWidgets);
-      await tester.tap(find.byKey(const Key('btn_tab1_page4')));
-      await tester.pump();
+      await tester.tap(find.byKey(const Key('btn_tab1_page4')));     
+      await tester.pumpAndSettle();
       expect(find.text('page4'), findsWidgets);
     });
     testWidgets('Push redirect page', (WidgetTester tester) async {
