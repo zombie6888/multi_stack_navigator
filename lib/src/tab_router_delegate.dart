@@ -263,8 +263,6 @@ class TabRouterDelegate extends RouterDelegate<NavigationStack>
     }
   }
 
-  final _heroController = HeroController();
-
   @override
   Widget build(BuildContext context) {
     // TODO: First build occurs before setNewRoutePath called.
@@ -280,8 +278,7 @@ class TabRouterDelegate extends RouterDelegate<NavigationStack>
         tabRoutes.isNotEmpty ? tabRoutes[_stack.currentIndex] : null;
 
     return Navigator(
-        key: _rootNavigatorKey,
-        observers: [_heroController],
+        key: _rootNavigatorKey,       
         pages: [
           if (tabRoutes.isNotEmpty)
             MaterialPage(
