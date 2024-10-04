@@ -92,8 +92,8 @@ class AppRouter extends InheritedWidget {
       String path, Map<String, dynamic>? queryParameters) {
     if (queryParameters != null) {
       final uri = Uri.parse(path);
-      Map<String, String> stringQueryParameters =
-          queryParameters.map((key, value) => MapEntry(key, value!.toString()));
+      Map<String, dynamic> stringQueryParameters =
+          queryParameters.map((key, value) => MapEntry(key, value?.toString()));
       final fullUri = uri.replace(
           queryParameters: {...uri.queryParameters, ...stringQueryParameters});
       return fullUri.toString();
