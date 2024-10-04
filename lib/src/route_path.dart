@@ -44,12 +44,12 @@ class RoutePath {
         widget = null;
 
   /// Query params from [Uri.queryParameters]
-  final Map<String, String>? queryParams;
+  final Map<String, dynamic>? queryParams;
 
   /// Nested routes
   final List<RoutePath> children;
 
-  final Map<String, String>? params;
+  final Map<String, dynamic>? params;
 
   /// Path to route, for example: /tab1/page1
   final String path;
