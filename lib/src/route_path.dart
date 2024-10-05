@@ -73,7 +73,7 @@ class RoutePath {
       other.path == path && other.queryString == queryString;
 
   RoutePath copyWith(
-          {List<RoutePath>? children, Map<String, String>? queryParams}) =>
+          {List<RoutePath>? children, Map<String, dynamic>? queryParams}) =>
       RoutePath(path, widget,
           navigatorKey: navigatorKey,
           queryParams: queryParams ?? this.queryParams,
