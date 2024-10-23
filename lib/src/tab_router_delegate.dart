@@ -105,7 +105,7 @@ class TabRouterDelegate extends RouterDelegate<NavigationStack>
           Container();
     }
 
-    return Navigator(        
+    return Navigator(
         key: _stack.routes[index].navigatorKey,
         observers: [HeroController()],
         pages: nestedPages,
@@ -274,19 +274,20 @@ class TabRouterDelegate extends RouterDelegate<NavigationStack>
         .map((route) => _createPage(route));
 
     final tabRoutes = routes.where((e) => e.children.isNotEmpty).toList();
-    final currentPath =
-        tabRoutes.isNotEmpty ? tabRoutes[_stack.currentIndex] : null;
+    final currentPath = tabRoutes.isNotEmpty
+        ? tabRoutes[_stack.currentIndex]
+        : _routeNotFoundPath;
 
-    return Navigator(
-        key: _rootNavigatorKey,       
-        pages: [
-          if (tabRoutes.isNotEmpty)
-            MaterialPage(
-              child: AppRouter(
-                routePath: currentPath!,
-                routerDelegate: this,
-                navigatorKey: _rootNavigatorKey,
-                rootNavigatorKey: _rootNavigatorKey,
+    return AppRouter(
+      routePath: currentPath,
+      routerDelegate: this,
+      navigatorKey: _rootNavigatorKey,
+      rootNavigatorKey: _rootNavigatorKey,
+      child: Navigator(
+          key: _rootNavigatorKey,
+          pages: [
+            if (tabRoutes.isNotEmpty)
+              MaterialPage(
                 child: TabStackBuilder(
                     index: _stack.currentIndex,
                     tabIndexUpdateHandler: _tabIndexUpdateHandler,
@@ -305,14 +306,14 @@ class TabRouterDelegate extends RouterDelegate<NavigationStack>
                           context, tabRoutes, view, controller);
                     }),
               ),
-            ),
-          ...pages
-        ],
-        onGenerateRoute: (settings) =>
-            MaterialPageRoute(builder: (_) => Container()),
-        onUnknownRoute: (settings) =>
-            MaterialPageRoute(builder: (_) => Container()),
-        onPopPage: (route, result) => _onPopRootPage(route, result, pages));
+            ...pages
+          ],
+          onGenerateRoute: (settings) =>
+              MaterialPageRoute(builder: (_) => Container()),
+          onUnknownRoute: (settings) =>
+              MaterialPageRoute(builder: (_) => Container()),
+          onPopPage: (route, result) => _onPopRootPage(route, result, pages)),
+    );
   }
 
   /// Update route configuration when active tab [index] is changing.
